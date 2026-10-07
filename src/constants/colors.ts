@@ -1,0 +1,16 @@
+export const colors = {
+  primary: "#4CAF50",
+  blue: "#42A5F5",
+  gold: "#D9B43F",
+  goldAccent: "#FFD54F",
+  coral: "#FF8A65",
+  textPrimary: "#333333",
+  textSecondary: "#666666",
+  textMuted: "#33333380",
+  white: "#FFFFFF",
+  shadow: "#000",
+  achievementUncompleted: "#D9DADB",
+  textOnColor: "#F0F0F0",
+  surface: "#FFFFFF",
+  border: "#E0E0E0",
+} as const;
