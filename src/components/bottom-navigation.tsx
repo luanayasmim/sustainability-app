@@ -97,7 +97,7 @@ export function BottomNavigation(props: BottomTabBarProps) {
             <View
               style={
                 item.isFocused
-                  ? styles.menuButtonPrincipal
+                  ? [styles.menuButtonPrincipal, { backgroundColor: item.color }]
                   : [styles.menuButton, { borderColor: item.color }]
               }
             >
