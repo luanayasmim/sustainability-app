@@ -19,54 +19,67 @@ export function LearningSection({
   title,
   backgroundColor,
 }: LearningSectionProps) {
+  const activities = [
+    {
+      title: "Capítulo I",
+      description: "(nome da missão)",
+      icon: <BookOpenIcon color={colors.white} size={40} weight="fill" />,
+      backgroundColor,
+      iconSize: 80,
+    },
+    {
+      title: "Tópico I",
+      description: "descrição",
+      icon: <PencilIcon color={colors.white} size={40} />,
+      backgroundColor,
+      iconSize: 70,
+    },
+    {
+      title: "Tópico II",
+      description: "Descrição",
+      icon: <NotebookIcon color={colors.white} size={40} />,
+      backgroundColor,
+      iconSize: 60,
+    },
+    {
+      title: "Para saber mais",
+      description: "Descrição",
+      icon: <MagnifyingGlassIcon color={colors.white} size={40} />,
+      backgroundColor: colors.coral,
+      iconSize: 60,
+    },
+    {
+      title: "Desafio Prático",
+      description: "Descrição",
+      icon: <TrophyIcon color={colors.white} size={40} weight="fill" />,
+      backgroundColor: colors.goldAccent,
+      iconSize: 60,
+    },
+  ];
+
   return (
     <View style={styles.container}>
       <SectionHeading backgroundColor={backgroundColor}>{title}</SectionHeading>
       <View style={styles.activitiesContainer}>
-        <ChapterCard
-          chapterIcon={
-            <BookOpenIcon
-              color={colors.white}
-              size={40}
-              weight="fill"
-            />
-          }
-          title="Capítulo I"
-          description="descrição"
-          backgroundColor={backgroundColor}
-        />
-        <ChapterCard
-          chapterIcon={<PencilIcon color={colors.white} size={40} />}
-          title="Tópico I"
-          description="descrição"
-          backgroundColor={backgroundColor}
-        />
-        <ChapterCard
-          chapterIcon={<NotebookIcon color={colors.white} size={40} />}
-          title="Tópico II"
-          description="descrição"
-          backgroundColor={backgroundColor}
-        />
-        <ChapterCard
-          chapterIcon={
-            <MagnifyingGlassIcon color={colors.white} size={40} />
-          }
-          title="Para saber mais"
-          description="descrição"
-          backgroundColor={colors.coral}
-        />
-        <ChapterCard
-          chapterIcon={
-            <TrophyIcon
-              color={colors.white}
-              size={40}
-              weight="fill"
-            />
-          }
-          title="Desafio Prático"
-          description="descrição"
-          backgroundColor={colors.goldAccent}
-        />
+        {activities.map((activity, index) => (
+          <View
+            key={activity.title}
+            style={[
+              styles.activityRow,
+              index % 2 === 0 ? styles.leftActivity : styles.rightActivity,
+            ]}
+          >
+            <View style={styles.activityColumn}>
+              <ChapterCard
+                chapterIcon={activity.icon}
+                title={activity.title}
+                description={activity.description}
+                backgroundColor={activity.backgroundColor}
+                iconSize={activity.iconSize}
+              />
+            </View>
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -77,7 +90,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   activitiesContainer: {
+    width: 264,
     flexDirection: "column",
-    justifyContent: "space-between",
+    paddingTop: 52,
+  },
+  activityRow: {
+    width: "100%",
+    flexDirection: "row",
+  },
+  leftActivity: {
+    justifyContent: "flex-start",
+  },
+  rightActivity: {
+    justifyContent: "flex-end",
+  },
+  activityColumn: {
+    width: "50%",
+    alignItems: "center",
   },
 });
