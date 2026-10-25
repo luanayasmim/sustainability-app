@@ -1,9 +1,10 @@
+import { CustomText } from "@/components/custom-text";
+import { colors } from "@/constants/colors";
+import { getUserName } from "@/storage/user";
 import { router } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
-import { CustomText } from "../components/custom-text";
-import { colors } from "../constants/colors";
-import { getUserName } from "../storage/user";
+import { Pressable, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const [error, setError] = useState<string | null>(null);
@@ -14,8 +15,10 @@ export default function Index() {
     try {
       const name = await getUserName();
       router.replace(name ? "/(tabs)" : "/onboarding");
-    } catch {
+    } catch (loadError) {
+      console.error("Não foi possível verificar o perfil.", loadError);
       setError("Não foi possível verificar seu perfil. Tente novamente.");
+      await SplashScreen.hideAsync();
     }
   }, []);
 
@@ -34,11 +37,7 @@ export default function Index() {
     );
   }
 
-  return (
-    <View style={styles.container}>
-      <ActivityIndicator color={colors.primary} />
-    </View>
-  );
+  return <View style={styles.container} />;
 }
 
 const styles = StyleSheet.create({
@@ -46,7 +45,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#ADBAA7",
     padding: 24,
   },
   error: {

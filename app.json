@@ -8,7 +8,8 @@
     "scheme": "sustainabilityapp",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.sustainability-app"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,9 +28,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash.png",
+          "image": "./assets/images/splash1.png",
           "resizeMode": "contain",
-          "backgroundColor": "#f0f0f0"
+          "imageWidth": 300,
+          "backgroundColor": "#ADBAA7"
         }
       ],
       [

@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
+import { Slot, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { syncAppIconWithQuizProgress } from "@/storage/app-icon";
@@ -11,6 +11,7 @@ import {
 void SplashScreen.preventAutoHideAsync();
 
 export default function AppLayout() {
+  const segments = useSegments();
   const [fontsLoaded, fontError] = useFonts({
     "Poppins-Black": require("../../assets/fonts/Poppins-Black.ttf"),
     "Poppins-BlackItalic": require("../../assets/fonts/Poppins-BlackItalic.ttf"),
@@ -33,16 +34,21 @@ export default function AppLayout() {
   });
 
   useEffect(() => {
-    if (fontsLoaded || fontError) {
-      void SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  useEffect(() => {
     void syncAppIconWithQuizProgress().catch((error: unknown) => {
       console.error("Não foi possível sincronizar o ícone do app.", error);
     });
   }, []);
+
+  useEffect(() => {
+    if (
+      (fontsLoaded || fontError) &&
+      segments.length > 0
+    ) {
+      void SplashScreen.hideAsync().catch((error: unknown) => {
+        console.error("Não foi possível ocultar o splash nativo.", error);
+      });
+    }
+  }, [fontError, fontsLoaded, segments]);
 
   if (!fontsLoaded && !fontError) {
     return null;
