@@ -275,18 +275,79 @@ export const chapters: readonly Chapter[] = [
     topics: [
       {
         title: "De onde vem a água que usamos?",
-        steps: [
-          "A chuva abastece rios, lagos e reservatórios, que são fontes de água para as cidades.",
-          "Nas estações de tratamento, a água passa por etapas que retiram sujeiras e reduzem impurezas.",
-          "Depois de tratada, a água segue pela rede de distribuição até as casas e pode ser usada com segurança.",
+        intro:
+          "A água faz uma grande viagem pela natureza antes de chegar à nossa torneira. Vamos acompanhar essa aventura e descobrir como ela volta para os rios e para o céu!",
+        sections: [
+          {
+            type: "story",
+            title: "A água passeia pela natureza",
+            text:
+              "Com o calor do sol, parte da água de rios, lagos e mares sobe para o céu em forma de vapor. Lá em cima, o vapor esfria e forma nuvens. Esse passeio faz parte do ciclo da água.",
+          },
+          {
+            type: "story",
+            title: "A chuva enche rios e reservatórios",
+            text:
+              "Quando as gotinhas das nuvens ficam pesadas, caem como chuva. A água pode chegar aos rios, lagos e reservatórios que abastecem as cidades.",
+          },
+          {
+            type: "story",
+            title: "Uma parada para ficar própria para o uso",
+            text:
+              "A água captada passa por etapas de tratamento que retiram sujeiras e ajudam a torná-la adequada para o consumo. Depois, segue por tubulações até as casas.",
+          },
+          {
+            type: "story",
+            title: "E o ciclo continua",
+            text:
+              "Depois de usada, a água que vai pelo ralo precisa ser coletada e tratada antes de voltar à natureza. Cuidar dos rios e não jogar lixo neles ajuda a proteger essa viagem.",
+          },
+          {
+            type: "tip",
+            title: "Curiosidade",
+            text:
+              "A mesma água circula pela Terra há muito tempo: ela muda de lugar e de forma, passando pelo ar, pelo solo, pelos rios e pelos seres vivos.",
+          },
         ],
       },
       {
         title: "Como economizar água",
-        steps: [
-          "Observe como a água é usada em casa e procure torneiras pingando ou outros vazamentos.",
-          "Feche a torneira ao escovar os dentes e reduza o tempo do banho para evitar desperdícios.",
-          "Reaproveite água sempre que for seguro, por exemplo, para regar plantas ou limpar áreas externas.",
+        intro:
+          "Cada gotinha conta! Pequenas escolhas feitas com a família ajudam a evitar o desperdício e a cuidar da água que usamos todos os dias.",
+        sections: [
+          {
+            type: "checklist",
+            title: "Missões para fazer em família",
+            items: [
+              {
+                title: "Torneira fechada",
+                text:
+                  "Feche a torneira enquanto escova os dentes ou ensaboa as mãos. Abra só na hora de enxaguar.",
+              },
+              {
+                title: "Banho esperto",
+                text:
+                  "Combine com um responsável um banho mais curto. Enquanto se ensaboa, deixe o chuveiro fechado, se for seguro.",
+              },
+              {
+                title: "Olhos atentos",
+                text:
+                  "Se notar uma torneira pingando ou um vazamento, avise um adulto. O conserto deve ser feito por um responsável.",
+              },
+            ],
+          },
+          {
+            type: "story",
+            title: "Reutilizar com cuidado",
+            text:
+              "Um adulto pode guardar água limpa que sobrou de algumas tarefas para regar plantas ou limpar o quintal. Nunca beba água reaproveitada nem mexa em baldes ou recipientes sem pedir ajuda.",
+          },
+          {
+            type: "tip",
+            title: "Desafio da gotinha",
+            text:
+              "Escolha com sua família uma missão desta lista e tentem praticá-la durante a semana. Depois, contem qual foi a mais fácil de lembrar!",
+          },
         ],
       },
     ],
@@ -320,18 +381,96 @@ export const chapters: readonly Chapter[] = [
     topics: [
       {
         title: "Fontes de energia",
-        steps: [
-          "A energia está presente em atividades do dia a dia, como iluminar a casa e carregar um celular.",
-          "Algumas fontes se renovam naturalmente, como o sol e o vento. Outras, como petróleo e carvão, são limitadas.",
-          "Conhecer as fontes de energia ajuda a entender por que economizar e ampliar as opções renováveis é importante.",
+        intro:
+          "A energia faz muitas coisas acontecerem: acende lâmpadas, ajuda a geladeira a conservar alimentos e permite que aparelhos funcionem. Mas de onde será que ela vem?",
+        sections: [
+          {
+            type: "materials",
+            title: "Fontes renováveis: a natureza se renova",
+            items: [
+              {
+                name: "☀️ Sol",
+                examples: "A luz e o calor que chegam do Sol.",
+                becomes:
+                  "Painéis solares podem transformar a luz do Sol em eletricidade.",
+                color: "#FFF2CC",
+              },
+              {
+                name: "🌬️ Vento",
+                examples: "O ar em movimento.",
+                becomes:
+                  "O vento gira grandes turbinas, que ajudam a produzir eletricidade.",
+                color: "#DCEBFF",
+              },
+              {
+                name: "💧 Água em movimento",
+                examples: "A força da água de rios em usinas hidrelétricas.",
+                becomes:
+                  "A água movimenta equipamentos que geram eletricidade. As usinas também precisam cuidar dos rios e dos ambientes ao redor.",
+                color: "#DDF4EF",
+              },
+            ],
+          },
+          {
+            type: "materials",
+            title: "Fontes não renováveis: existem em quantidade limitada",
+            items: [
+              {
+                name: "🪨 Petróleo, carvão e gás natural",
+                examples:
+                  "Combustíveis encontrados no subsolo e formados ao longo de muito tempo.",
+                becomes:
+                  "São usados para produzir energia, mas podem acabar e sua utilização pode causar poluição.",
+                color: "#F0E8E1",
+              },
+            ],
+          },
+          {
+            type: "tip",
+            title: "O que você pode fazer?",
+            text:
+              "Não precisa mexer em aparelhos: apague a luz ao sair de um cômodo quando for seguro e peça a um adulto para desligar o que não estiver sendo usado. Nunca toque em tomadas, fios ou equipamentos elétricos.",
+          },
         ],
       },
       {
         title: "Economia de energia",
-        steps: [
-          "Durante o dia, abra cortinas e aproveite a luz natural sempre que puder.",
-          "Apague as luzes ao sair de um cômodo e desligue aparelhos que não estiverem sendo usados.",
-          "Crie o hábito de verificar luzes e aparelhos antes de sair ou dormir para evitar consumo desnecessário.",
+        intro:
+          "Economizar energia é como cuidar de um tesouro que usamos todos os dias. Combinando pequenas atitudes com a família, evitamos gastar energia sem necessidade.",
+        sections: [
+          {
+            type: "checklist",
+            title: "Pequenas atitudes que ajudam",
+            items: [
+              {
+                title: "Aproveite a luz do dia",
+                text:
+                  "Abra as cortinas para iluminar o ambiente naturalmente, com a ajuda de um adulto se a janela estiver alta.",
+              },
+              {
+                title: "Luz apagada ao sair",
+                text:
+                  "Se for seguro e o interruptor estiver ao seu alcance, apague a luz ao sair. Se não, peça ajuda a um responsável.",
+              },
+              {
+                title: "Aparelhos em descanso",
+                text:
+                  "Avise um adulto quando um aparelho ficar ligado sem ninguém usando. Só um adulto deve desligá-lo da tomada.",
+              },
+            ],
+          },
+          {
+            type: "story",
+            title: "Por que isso faz diferença?",
+            text:
+              "Produzir e levar energia até nossas casas usa recursos e equipamentos. Quando evitamos o desperdício, ajudamos a cuidar da natureza e também da energia disponível para todos.",
+          },
+          {
+            type: "tip",
+            title: "Combinado de segurança",
+            text:
+              "Crianças nunca devem mexer em tomadas, fios, plugues ou aparelhos elétricos. Se vir algo quebrado ou um fio solto, afaste-se e chame um adulto.",
+          },
         ],
       },
     ],
@@ -366,18 +505,82 @@ export const chapters: readonly Chapter[] = [
     topics: [
       {
         title: "Reduzir, reutilizar e reciclar",
-        steps: [
-          "Reduza o que não é necessário: planeje suas compras e prefira produtos com menos embalagens.",
-          "Reutilize objetos sempre que possível, consertando-os ou encontrando uma nova forma de uso.",
-          "Quando não puder reutilizar, separe os materiais recicláveis para que possam voltar ao ciclo de produção.",
+        intro:
+          "Antes de algo ir para o lixo, podemos pensar em três superpoderes: reduzir, reutilizar e reciclar. Eles ajudam a usar melhor os recursos do planeta!",
+        sections: [
+          {
+            type: "checklist",
+            title: "Os três superpoderes",
+            items: [
+              {
+                title: "1. Reduzir",
+                text:
+                  "É evitar o que não precisamos. Com um responsável, faça uma lista antes das compras e escolha produtos com menos embalagens quando possível.",
+              },
+              {
+                title: "2. Reutilizar",
+                text:
+                  "É usar de novo ou dar uma nova função a algo que ainda está em boas condições. Uma caixa limpa pode virar um organizador ou brinquedo, com ajuda de um adulto.",
+              },
+              {
+                title: "3. Reciclar",
+                text:
+                  "Quando um material não puder mais ser usado, separe-o corretamente para a coleta seletiva, seguindo as regras da sua cidade com um responsável.",
+              },
+            ],
+          },
+          {
+            type: "story",
+            title: "Qual superpoder vem primeiro?",
+            text:
+              "Reduzir e reutilizar vêm antes de reciclar: assim, fazemos um objeto durar mais e evitamos criar resíduos tão cedo. Quando ele realmente não puder ser usado, a reciclagem pode ajudar.",
+          },
+          {
+            type: "tip",
+            title: "Atenção",
+            text:
+              "Reutilize apenas objetos limpos e seguros. Peça ajuda a um adulto e não use embalagens que guardaram produtos de limpeza ou substâncias desconhecidas.",
+          },
         ],
       },
       {
         title: "Escolhas mais conscientes",
-        steps: [
-          "Antes de comprar, pense se você realmente precisa daquele produto e se já tem algo que possa usar.",
-          "Compare opções e prefira produtos duráveis, reutilizáveis e com menos embalagens.",
-          "Cuide bem do que comprou e descarte cada material corretamente quando não puder mais ser usado.",
+        intro:
+          "Ser um consumidor consciente é fazer escolhas pensando no que precisamos e em como nossas escolhas afetam as pessoas e a natureza. Crianças também podem ajudar a família a pensar!",
+        sections: [
+          {
+            type: "checklist",
+            title: "Perguntas de detetive antes de comprar",
+            items: [
+              {
+                title: "Eu preciso mesmo?",
+                text:
+                  "Converse com um responsável: talvez você já tenha algo que sirva ou possa ser consertado.",
+              },
+              {
+                title: "Vai durar bastante?",
+                text:
+                  "Quando for escolher entre opções, prefiram juntos algo que possa ser usado por mais tempo e cuidado direitinho.",
+              },
+              {
+                title: "Tem embalagem demais?",
+                text:
+                  "Observe as embalagens com sua família. Quando houver opções adequadas, prefiram as que geram menos resíduos.",
+              },
+            ],
+          },
+          {
+            type: "story",
+            title: "Cuidar também é consumir melhor",
+            text:
+              "Guardar os brinquedos, cuidar dos livros, emprestar ou doar o que está em bom estado ajuda os objetos a continuarem úteis por mais tempo.",
+          },
+          {
+            type: "tip",
+            title: "Uma escolha pequena já conta",
+            text:
+              "Você não precisa decidir sozinho nem comprar nada. Pode ajudar conversando com um responsável, cuidando do que já tem e evitando desperdícios.",
+          },
         ],
       },
     ],
