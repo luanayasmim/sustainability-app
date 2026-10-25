@@ -1,12 +1,5 @@
-import { StyleSheet, View } from "react-native";
-import { BottomNavigation } from "../components/bottom-navigation";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return (
-    <View style={{ flex: 1, alignItems: "center" }}>
-      <BottomNavigation />
-    </View>
-  );
+  return <Redirect href="/(tabs)" />;
 }
-
-const styles = StyleSheet.create({});

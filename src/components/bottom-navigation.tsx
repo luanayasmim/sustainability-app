@@ -4,68 +4,132 @@ import {
   TrophyIcon,
   UserIcon,
 } from "phosphor-react-native";
+import type { BottomTabBarProps } from "expo-router/js-tabs";
+import type { ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { colors } from "../constants/colors";
 import { CustomText } from "./custom-text";
 
-type BottomNavigationProps = Readonly<{
-  onPressHome: () => void;
-  onPressAchievements: () => void;
-  onPressQuizzes: () => void;
-  onPressProfile: () => void;
-}>;
+type TabItem = {
+  label: string;
+  color: string;
+  renderIcon: (color: string) => ReactNode;
+};
 
-export function BottomNavigation() {
+const tabItems: Record<string, TabItem> = {
+  index: {
+    label: "Início",
+    color: colors.primary,
+    renderIcon: (color: string) => (
+      <HouseIcon color={color} size={24} weight="fill" />
+    ),
+  },
+  achivements: {
+    label: "Conquistas",
+    color: colors.goldAccent,
+    renderIcon: (color: string) => (
+      <TrophyIcon color={color} size={24} weight="fill" />
+    ),
+  },
+  quizzes: {
+    label: "Quizzes",
+    color: colors.coral,
+    renderIcon: (color: string) => (
+      <SealQuestionIcon color={color} size={24} weight="fill" />
+    ),
+  },
+  perfil: {
+    label: "Luana",
+    color: colors.blue,
+    renderIcon: (color: string) => (
+      <UserIcon color={color} size={24} weight="fill" />
+    ),
+  },
+};
+
+export function BottomNavigation(props: BottomTabBarProps) {
+  const items = props.state.routes.map((route, index) => {
+    const tab = tabItems[route.name];
+    const options = props.descriptors[route.key].options;
+    const isFocused = props.state.index === index;
+
+    return {
+      route,
+      label: tab?.label ?? options.title ?? route.name,
+      color: tab?.color ?? colors.primary,
+      icon: tab?.renderIcon(
+        isFocused ? colors.white : colors.textPrimary,
+      ),
+      isFocused,
+      accessibilityLabel: options.tabBarAccessibilityLabel,
+    };
+  });
+
   return (
     <View
-      style={{
-        alignItems: "center",
-        justifyContent: "space-around",
-        flexDirection: "row",
-        marginTop: 20,
-        marginBottom: 15,
-        width: "100%",
-        borderTopWidth: 1,
-        borderTopColor: colors.border,
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: colors.surface,
-      }}
+      style={[
+        styles.container,
+        { paddingBottom: Math.max(props.insets.bottom, 12) },
+      ]}
     >
-      <TouchableOpacity style={{ alignItems: "center" }}>
-        <View style={styles.menuButtonPrincipal}>
-          <HouseIcon color={colors.white} size={24} weight="fill" />
-        </View>
-        <CustomText style={styles.label}>Início</CustomText>
-      </TouchableOpacity>
+      {items.map((item) => {
+        const route = item.route;
 
-      <TouchableOpacity style={{ alignItems: "center" }}>
-        <View style={[styles.menuButton, { borderColor: colors.goldAccent }]}>
-          <TrophyIcon color={colors.textPrimary} size={24} weight="fill" />
-        </View>
-        <CustomText style={styles.label}>Conquistas</CustomText>
-      </TouchableOpacity>
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityLabel={item.accessibilityLabel}
+            accessibilityState={{ selected: item.isFocused }}
+            onPress={() => {
+              const event = props.navigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
+              });
 
-      <TouchableOpacity style={{ alignItems: "center" }}>
-        <View style={[styles.menuButton, { borderColor: colors.coral }]}>
-          <SealQuestionIcon color={colors.textPrimary} size={24} weight="fill" />
-        </View>
-        <CustomText style={styles.label}>Quizzes</CustomText>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={{ alignItems: "center" }}>
-        <View style={[styles.menuButton, { borderColor: colors.blue }]}>
-          <UserIcon color={colors.textPrimary} size={24} weight="fill" />
-        </View>
-        <CustomText style={styles.label}>Luana</CustomText>
-      </TouchableOpacity>
+              if (!item.isFocused && !event.defaultPrevented) {
+                props.navigation.navigate(route.name, route.params);
+              }
+            }}
+            style={styles.tab}
+          >
+            <View
+              style={
+                item.isFocused
+                  ? styles.menuButtonPrincipal
+                  : [styles.menuButton, { borderColor: item.color }]
+              }
+            >
+              {item.icon}
+            </View>
+            <CustomText style={styles.label}>{item.label}</CustomText>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "space-around",
+    flexDirection: "row",
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    backgroundColor: colors.surface,
+    paddingTop: 8,
+    zIndex: 1,
+  },
+  tab: {
+    alignItems: "center",
+  },
   menuButtonPrincipal: {
     width: 60,
     height: 60,

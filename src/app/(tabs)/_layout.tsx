@@ -1,8 +1,12 @@
 import { Tabs } from "expo-router";
+import { BottomNavigation } from "../../components/bottom-navigation";
 
 export default function TabsLayout() {
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{ tabBarPosition: "bottom" }}
+      tabBar={(props) => <BottomNavigation {...props} />}
+    >
       <Tabs.Screen name="index" options={{ title: "Início" }} />
       <Tabs.Screen
         name="achivements"
