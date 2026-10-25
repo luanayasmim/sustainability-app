@@ -34,7 +34,12 @@ export default function ChallengePage() {
 
     try {
       await completeChallenge(chapter.challenge.achievementId);
-      router.replace("/(tabs)");
+      const chapterIndex = chapters.findIndex((item) => item.id === chapter.id);
+      const nextChapter = chapters[(chapterIndex + 1) % chapters.length];
+      router.replace({
+        pathname: "/(tabs)",
+        params: { themeId: nextChapter.id },
+      });
     } catch (error) {
       console.error("Não foi possível salvar a conclusão do desafio.", error);
       setCompletionError(

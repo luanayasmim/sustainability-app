@@ -1,15 +1,30 @@
-import { ArrowDownIcon } from "phosphor-react-native";
+import { ArrowDownIcon, ArrowUpIcon } from "phosphor-react-native";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { colors } from "../constants/colors";
 
 type ScrollDownButtonProps = Readonly<{
-  backgroundColor?: string;
+  backgroundColor: string;
+  accessibilityLabel: string;
+  pointsUp?: boolean;
+  onPress: () => void;
 }>;
 
-export function ScrollDownButton({ backgroundColor }: ScrollDownButtonProps) {
+export function ScrollDownButton({
+  backgroundColor,
+  accessibilityLabel,
+  pointsUp = false,
+  onPress,
+}: ScrollDownButtonProps) {
+  const ArrowIcon = pointsUp ? ArrowUpIcon : ArrowDownIcon;
+
   return (
-    <TouchableOpacity style={[styles.scrollDownButton, { backgroundColor }]}>
-      <ArrowDownIcon color={colors.white} size={24} weight="fill" />
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      onPress={onPress}
+      style={[styles.scrollDownButton, { backgroundColor }]}
+    >
+      <ArrowIcon color={colors.white} size={24} weight="fill" />
     </TouchableOpacity>
   );
 }
