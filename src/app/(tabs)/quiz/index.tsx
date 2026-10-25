@@ -118,7 +118,7 @@ export default function QuizPage() {
       setAttemptSaveError(null);
 
       try {
-        await saveQuizAttempt(quiz.chapterId, score);
+        await saveQuizAttempt(quiz.chapterId, correctAnswers, totalQuestions);
       } catch (error) {
         console.error("Não foi possível salvar o resultado do quiz.", error);
         setAttemptSaveError(
@@ -187,7 +187,11 @@ export default function QuizPage() {
     setAttemptSaveError(null);
 
     try {
-      await saveQuizAttempt(quiz.chapterId, finalScore);
+      await saveQuizAttempt(
+        quiz.chapterId,
+        answers.filter(Boolean).length,
+        totalQuestions,
+      );
     } catch (error) {
       console.error("Não foi possível salvar o resultado do quiz.", error);
       setAttemptSaveError(

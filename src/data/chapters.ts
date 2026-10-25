@@ -72,7 +72,7 @@ export const chapters: readonly Chapter[] = [
     },
     moreInfo: {
       fact: "Você sabia? A reciclagem começa em casa: separar os resíduos corretamente ajuda a coleta seletiva e o trabalho das cooperativas.",
-      url: "https://www.gov.br/mma/pt-br/assuntos/qualidade-ambiental-e-meio-ambiente-urbano/residuos-solidos",
+      url: "https://youtu.be/tqr9ww9TTY8?si=isaPD7q5DvILHaLC",
     },
     topics: [
       {
@@ -251,7 +251,7 @@ export const chapters: readonly Chapter[] = [
     },
     moreInfo: {
       fact: "Você sabia? A água que usamos percorre um caminho que inclui captação, tratamento e distribuição antes de chegar às casas.",
-      url: "https://www.gov.br/ana/pt-br",
+      url: "https://youtu.be/ClcluFPSi0Y?si=GBSJ7iLiYgC8O8xF",
     },
     topics: [
       {
@@ -345,7 +345,7 @@ export const chapters: readonly Chapter[] = [
     },
     moreInfo: {
       fact: "Você sabia? A energia solar e a energia dos ventos são exemplos de fontes renováveis, pois dependem de recursos naturais que se renovam.",
-      url: "https://www.epe.gov.br/pt/abcdenergia",
+      url: "https://youtu.be/6r0EgxExbEU?si=yePd66mCVOXjZEEf",
     },
     topics: [
       {
@@ -461,7 +461,7 @@ export const chapters: readonly Chapter[] = [
     },
     moreInfo: {
       fact: "Você sabia? Reutilizar um objeto e evitar produtos descartáveis são formas simples de reduzir a quantidade de resíduos gerados.",
-      url: "https://www.gov.br/mma/pt-br/assuntos/consumo-sustentavel",
+      url: "https://youtu.be/SjtCDJFgin8?si=lgHYo3aOPzTqxIvd",
     },
     topics: [
       {

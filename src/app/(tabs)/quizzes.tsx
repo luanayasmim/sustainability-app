@@ -119,7 +119,7 @@ export default function QuizzesPage() {
                 <TouchableOpacity
                   key={quiz.title}
                   accessibilityRole="button"
-                  accessibilityLabel={`Refazer ${quiz.title}, última tentativa ${quizAttempts[quiz.chapterId]} por cento`}
+                  accessibilityLabel={`Refazer ${quiz.title}, última tentativa ${quizAttempts[quiz.chapterId].percentage} por cento`}
                   activeOpacity={0.8}
                   onPress={() =>
                     router.push(`${quiz.route}?quizIndex=${index}` as Href)
@@ -127,7 +127,16 @@ export default function QuizzesPage() {
                   style={styles.quizCard}
                 >
                   <QuizAttemptCard
-                    lastAttemptPercentage={quizAttempts[quiz.chapterId]}
+                    lastAttemptPercentage={
+                      quizAttempts[quiz.chapterId].percentage
+                    }
+                    attemptCount={quizAttempts[quiz.chapterId].attemptCount}
+                    correctAnswers={
+                      quizAttempts[quiz.chapterId].correctAnswers
+                    }
+                    totalQuestions={
+                      quizAttempts[quiz.chapterId].totalQuestions
+                    }
                     title={quiz.title}
                     titleColor={colors.primary}
                   />
