@@ -8,6 +8,7 @@ type ChapterCardProps = Readonly<{
   description: string;
   backgroundColor: string;
   iconSize?: number;
+  onPress?: () => void;
 }>;
 
 export function ChapterCard({
@@ -16,9 +17,15 @@ export function ChapterCard({
   description,
   backgroundColor,
   iconSize = 80,
+  onPress,
 }: ChapterCardProps) {
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity
+      accessibilityRole={onPress ? "button" : undefined}
+      disabled={!onPress}
+      onPress={onPress}
+      style={styles.card}
+    >
       <View
         style={[
           styles.icon,
@@ -48,6 +55,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     fontFamily: "Poppins-SemiBold",
+    textAlign: "center",
   },
   description: {
     fontSize: 12,

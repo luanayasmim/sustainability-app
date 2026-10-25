@@ -3,8 +3,11 @@ import { CustomText } from "@/components/custom-text";
 import { colors } from "@/constants/colors";
 import { router } from "expo-router";
 import type { Icon } from "phosphor-react-native";
-import { WindmillIcon, XIcon } from "phosphor-react-native";
+import { HammerIcon, WindmillIcon, XIcon } from "phosphor-react-native";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "expo-router";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { getCompletedChallengeIds } from "@/storage/challenges";
 
 type Achievement = Readonly<
   | { id: string; isCompleted: false }
@@ -52,6 +55,35 @@ const achievementSections: readonly AchievementSection[] = [
 ];
 
 export default function AchievementsPage() {
+  const [completedChallengeIds, setCompletedChallengeIds] = useState<
+    readonly string[]
+  >([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      getCompletedChallengeIds()
+        .then((ids) => {
+          if (isActive) {
+            setCompletedChallengeIds(ids);
+            setLoadError(null);
+          }
+        })
+        .catch((error: unknown) => {
+          console.error("Não foi possível carregar as conquistas.", error);
+          if (isActive) {
+            setLoadError("Não foi possível carregar suas conquistas.");
+          }
+        });
+
+      return () => {
+        isActive = false;
+      };
+    }, []),
+  );
+
   return (
     <View style={styles.screen}>
       <TouchableOpacity
@@ -68,6 +100,11 @@ export default function AchievementsPage() {
         showsVerticalScrollIndicator={false}
       >
         <CustomText style={styles.pageTitle}>Minhas Conquistas</CustomText>
+        {loadError ? (
+          <CustomText accessibilityRole="alert" style={styles.error}>
+            {loadError}
+          </CustomText>
+        ) : null}
         <View style={styles.sections}>
           {achievementSections.map((section) => (
             <View key={section.title} style={styles.section}>
@@ -75,22 +112,32 @@ export default function AchievementsPage() {
                 {section.title}
               </CustomText>
               <View style={styles.badges}>
-                {section.achievements.map((achievement) =>
-                  achievement.isCompleted ? (
+                {section.achievements.map((achievement) => {
+                  const isCompleted =
+                    achievement.isCompleted ||
+                    completedChallengeIds.includes(achievement.id);
+
+                  if (!isCompleted) {
+                    return (
+                      <AchievementCard
+                        key={achievement.id}
+                        isCompleted={false}
+                        size={80}
+                      />
+                    );
+                  }
+
+                  return (
                     <AchievementCard
                       key={achievement.id}
                       isCompleted
-                      completedIcon={achievement.icon}
+                      completedIcon={
+                        achievement.isCompleted ? achievement.icon : HammerIcon
+                      }
                       size={80}
                     />
-                  ) : (
-                    <AchievementCard
-                      key={achievement.id}
-                      isCompleted={false}
-                      size={80}
-                    />
-                  )
-                )}
+                  );
+                })}
               </View>
             </View>
           ))}
@@ -122,6 +169,12 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     fontWeight: "bold",
     lineHeight: 48,
+  },
+  error: {
+    color: "#B42318",
+    textAlign: "center",
+    marginTop: 12,
+    marginHorizontal: 24,
   },
   sections: {
     marginTop: 25,
