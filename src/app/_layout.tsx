@@ -2,6 +2,7 @@ import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { syncAppIconWithQuizProgress } from "@/storage/app-icon";
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -36,6 +37,12 @@ export default function AppLayout() {
       void SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
+
+  useEffect(() => {
+    void syncAppIconWithQuizProgress().catch((error: unknown) => {
+      console.error("Não foi possível sincronizar o ícone do app.", error);
+    });
+  }, []);
 
   if (!fontsLoaded && !fontError) {
     return null;

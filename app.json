@@ -4,7 +4,7 @@
     "slug": "sustainability-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon1.png",
     "scheme": "sustainabilityapp",
     "userInterfaceStyle": "light",
     "ios": {
@@ -27,12 +27,40 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash.png",
           "resizeMode": "contain",
           "backgroundColor": "#f0f0f0"
         }
       ],
-      "expo-alternate-app-icons"
+      [
+        "expo-alternate-app-icons",
+        [
+          {
+            "name": "Icon2",
+            "ios": "./assets/images/icon2.png",
+            "android": {
+              "foregroundImage": "./assets/images/icon2.png",
+              "backgroundColor": "#F0F0F0"
+            }
+          },
+          {
+            "name": "Icon3",
+            "ios": "./assets/images/icon3.png",
+            "android": {
+              "foregroundImage": "./assets/images/icon3.png",
+              "backgroundColor": "#F0F0F0"
+            }
+          },
+          {
+            "name": "Icon4",
+            "ios": "./assets/images/icon4.png",
+            "android": {
+              "foregroundImage": "./assets/images/icon4.png",
+              "backgroundColor": "#F0F0F0"
+            }
+          }
+        ]
+      ]
     ],
     "experiments": {
       "typedRoutes": true

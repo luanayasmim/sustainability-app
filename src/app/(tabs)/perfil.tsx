@@ -3,7 +3,7 @@ import { CustomInput } from "@/components/custom-input";
 import { CustomText } from "@/components/custom-text";
 import { PrimaryButton } from "@/components/primary-button";
 import { colors } from "@/constants/colors";
-import { quizzes } from "@/data/quizzes";
+import { getActiveQuizIndex, quizzes } from "@/data/quizzes";
 import { getCompletedQuizAchievementIds } from "@/storage/quiz-achievements";
 import { getUserName, saveUserName } from "@/storage/user";
 import { router, useFocusEffect } from "expo-router";
@@ -133,16 +133,13 @@ export default function ProfilePage() {
     Keyboard.dismiss();
   };
 
-  const activeQuizIndex = quizzes.findIndex(
-    (quiz) =>
-      !quiz.questions.every((question) =>
-        completedQuizAchievementIds.includes(question.achievement.id),
-      ),
+  const activeQuizIndex = getActiveQuizIndex(completedQuizAchievementIds);
+  const isAllQuizzesComplete = quizzes.every((quiz) =>
+    quiz.questions.every((question) =>
+      completedQuizAchievementIds.includes(question.achievement.id),
+    ),
   );
-  const isAllQuizzesComplete = activeQuizIndex === -1;
-  const profileQuiz = quizzes[
-    isAllQuizzesComplete ? quizzes.length - 1 : Math.max(activeQuizIndex, 0)
-  ];
+  const profileQuiz = quizzes[activeQuizIndex];
   const completedQuestionCount = profileQuiz.questions.filter((question) =>
     completedQuizAchievementIds.includes(question.achievement.id),
   ).length;

@@ -5,6 +5,7 @@ import { colors } from "@/constants/colors";
 import { quizzes } from "@/data/quizzes";
 import { saveQuizAttempt } from "@/storage/quiz-attempts";
 import { completeQuizAchievement } from "@/storage/quiz-achievements";
+import { syncAppIconWithQuizProgress } from "@/storage/app-icon";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   LightbulbFilamentIcon,
@@ -92,6 +93,9 @@ export default function QuizPage() {
 
       try {
         await completeQuizAchievement(question.achievement.id);
+        void syncAppIconWithQuizProgress().catch((error: unknown) => {
+          console.error("Não foi possível sincronizar o ícone do app.", error);
+        });
       } catch (error) {
         console.error("Não foi possível desbloquear a conquista da pergunta.", error);
         setAchievementError(

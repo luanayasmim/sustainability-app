@@ -277,3 +277,16 @@ export const quizzes: readonly Quiz[] = [
     ],
   },
 ];
+
+export function getActiveQuizIndex(
+  completedAchievementIds: readonly string[],
+): number {
+  const activeQuizIndex = quizzes.findIndex(
+    (quiz) =>
+      !quiz.questions.every((question) =>
+        completedAchievementIds.includes(question.achievement.id),
+      ),
+  );
+
+  return activeQuizIndex === -1 ? quizzes.length - 1 : activeQuizIndex;
+}
