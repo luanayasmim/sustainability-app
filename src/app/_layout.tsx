@@ -2,6 +2,10 @@ import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+} from "react-native-safe-area-context";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -37,5 +41,11 @@ export default function AppLayout() {
     return null;
   }
 
-  return <Slot />;
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView edges={["top", "left", "right"]} style={{ flex: 1 }}>
+        <Slot />
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
 }
