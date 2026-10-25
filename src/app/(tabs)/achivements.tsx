@@ -1,73 +1,40 @@
 import { AchievementCard } from "@/components/achievement-card";
 import { CustomText } from "@/components/custom-text";
 import { colors } from "@/constants/colors";
-import { router } from "expo-router";
+import { chapters } from "@/data/chapters";
+import { quizzes } from "@/data/quizzes";
+import { getCompletedQuizAchievementIds } from "@/storage/quiz-achievements";
+import { router, useFocusEffect } from "expo-router";
 import type { Icon } from "phosphor-react-native";
-import { HammerIcon, WindmillIcon, XIcon } from "phosphor-react-native";
+import { XIcon } from "phosphor-react-native";
 import { useCallback, useState } from "react";
-import { useFocusEffect } from "expo-router";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { getCompletedChallengeIds } from "@/storage/challenges";
 
-type Achievement = Readonly<
-  | { id: string; isCompleted: false }
-  | { id: string; isCompleted: true; icon: Icon }
->;
+type Achievement = Readonly<{
+  id: string;
+  name: string;
+  icon: Icon;
+  isCompleted: boolean;
+}>;
 
 type AchievementSection = Readonly<{
   title: string;
   achievements: readonly Achievement[];
 }>;
 
-const achievementSections: readonly AchievementSection[] = [
-  {
-    title: "Entendendo a Reciclagem",
-    achievements: [
-      { id: "recycling-basics", isCompleted: true, icon: WindmillIcon },
-      { id: "recycling-sorting", isCompleted: false },
-      { id: "recycling-challenge", isCompleted: false },
-    ],
-  },
-  {
-    title: "A importância da Água",
-    achievements: [
-      { id: "water-cycle", isCompleted: false },
-      { id: "water-conservation", isCompleted: false },
-      { id: "water-challenge", isCompleted: false },
-    ],
-  },
-  {
-    title: "O poder da Energia",
-    achievements: [
-      { id: "energy-sources", isCompleted: false },
-      { id: "renewable-energy", isCompleted: false },
-      { id: "energy-challenge", isCompleted: false },
-    ],
-  },
-  {
-    title: "Consumo Consciente",
-    achievements: [
-      { id: "conscious-consumption", isCompleted: false },
-      { id: "reuse-and-repair", isCompleted: false },
-      { id: "consumption-challenge", isCompleted: false },
-    ],
-  },
-];
-
 export default function AchievementsPage() {
-  const [completedChallengeIds, setCompletedChallengeIds] = useState<
-    readonly string[]
-  >([]);
+  const [completedQuizAchievementIds, setCompletedQuizAchievementIds] =
+    useState<readonly string[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
 
-      getCompletedChallengeIds()
-        .then((ids) => {
+      getCompletedQuizAchievementIds()
+        .then((quizAchievementIds) => {
           if (isActive) {
-            setCompletedChallengeIds(ids);
+            setCompletedQuizAchievementIds(quizAchievementIds);
             setLoadError(null);
           }
         })
@@ -82,6 +49,27 @@ export default function AchievementsPage() {
         isActive = false;
       };
     }, []),
+  );
+
+  const achievementSections: readonly AchievementSection[] = quizzes.map(
+    (quiz) => {
+      const chapter = chapters.find((item) => item.id === quiz.chapterId);
+      if (!chapter) {
+        throw new Error(`Não foi possível encontrar o tema "${quiz.chapterId}".`);
+      }
+
+      return {
+        title: quiz.title,
+        achievements: [
+          ...quiz.questions.map((question) => ({
+            ...question.achievement,
+            isCompleted: completedQuizAchievementIds.includes(
+              question.achievement.id,
+            ),
+          })),
+        ],
+      };
+    },
   );
 
   return (
@@ -114,28 +102,30 @@ export default function AchievementsPage() {
               <View style={styles.badges}>
                 {section.achievements.map((achievement) => {
                   const isCompleted =
-                    achievement.isCompleted ||
-                    completedChallengeIds.includes(achievement.id);
+                    achievement.isCompleted;
 
                   if (!isCompleted) {
                     return (
-                      <AchievementCard
-                        key={achievement.id}
-                        isCompleted={false}
-                        size={80}
-                      />
+                      <View key={achievement.id} style={styles.badgeItem}>
+                        <AchievementCard isCompleted={false} size={80} />
+                        <CustomText style={styles.badgeName}>
+                          {achievement.name}
+                        </CustomText>
+                      </View>
                     );
                   }
 
                   return (
-                    <AchievementCard
-                      key={achievement.id}
-                      isCompleted
-                      completedIcon={
-                        achievement.isCompleted ? achievement.icon : HammerIcon
-                      }
-                      size={80}
-                    />
+                    <View key={achievement.id} style={styles.badgeItem}>
+                      <AchievementCard
+                        isCompleted
+                        completedIcon={achievement.icon}
+                        size={80}
+                      />
+                      <CustomText style={styles.badgeName}>
+                        {achievement.name}
+                      </CustomText>
+                    </View>
                   );
                 })}
               </View>
@@ -192,7 +182,19 @@ const styles = StyleSheet.create({
   },
   badges: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 26,
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 20,
+  },
+  badgeItem: {
+    width: 84,
+    alignItems: "center",
+    gap: 6,
+  },
+  badgeName: {
+    color: colors.textPrimary,
+    fontSize: 10,
+    lineHeight: 14,
+    textAlign: "center",
   },
 });

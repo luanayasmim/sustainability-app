@@ -3,21 +3,19 @@ import { CustomInput } from "@/components/custom-input";
 import { CustomText } from "@/components/custom-text";
 import { PrimaryButton } from "@/components/primary-button";
 import { colors } from "@/constants/colors";
+import { quizzes } from "@/data/quizzes";
+import { getCompletedQuizAchievementIds } from "@/storage/quiz-achievements";
 import { getUserName, saveUserName } from "@/storage/user";
-import { router } from "expo-router";
-import { PencilSimpleIcon, XIcon } from "phosphor-react-native";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { PencilSimpleIcon, ShieldIcon, XIcon } from "phosphor-react-native";
+import { useCallback, useEffect, useState } from "react";
 import {
-  Image,
   Keyboard,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
-
-const missionDescription =
-  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
 
 export default function ProfilePage() {
   const [name, setName] = useState("");
@@ -26,6 +24,37 @@ export default function ProfilePage() {
   const [nameError, setNameError] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSavingName, setIsSavingName] = useState(false);
+  const [completedQuizAchievementIds, setCompletedQuizAchievementIds] =
+    useState<readonly string[]>([]);
+  const [achievementLoadError, setAchievementLoadError] = useState<
+    string | null
+  >(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      getCompletedQuizAchievementIds()
+        .then((achievementIds) => {
+          if (isActive) {
+            setCompletedQuizAchievementIds(achievementIds);
+            setAchievementLoadError(null);
+          }
+        })
+        .catch((error: unknown) => {
+          console.error("Não foi possível carregar o progresso dos quizzes.", error);
+          if (isActive) {
+            setAchievementLoadError(
+              "Não foi possível carregar seu progresso nos quizzes.",
+            );
+          }
+        });
+
+      return () => {
+        isActive = false;
+      };
+    }, []),
+  );
 
   useEffect(() => {
     let isActive = true;
@@ -87,6 +116,21 @@ export default function ProfilePage() {
     Keyboard.dismiss();
   };
 
+  const activeQuizIndex = quizzes.findIndex(
+    (quiz) =>
+      !quiz.questions.every((question) =>
+        completedQuizAchievementIds.includes(question.achievement.id),
+      ),
+  );
+  const isAllQuizzesComplete = activeQuizIndex === -1;
+  const profileQuiz = quizzes[
+    isAllQuizzesComplete ? quizzes.length - 1 : Math.max(activeQuizIndex, 0)
+  ];
+  const completedQuestionCount = profileQuiz.questions.filter((question) =>
+    completedQuizAchievementIds.includes(question.achievement.id),
+  ).length;
+  const ProfileBadgeIcon = profileQuiz.profileAchievement.icon;
+
   return (
     <View style={styles.screen}>
       <TouchableOpacity
@@ -135,19 +179,42 @@ export default function ProfilePage() {
 
         <CustomText style={styles.missionTitle}>Missão</CustomText>
         <CustomText style={styles.missionDescription}>
-          {missionDescription}
+          {isAllQuizzesComplete
+            ? "Parabéns! Você concluiu os quizzes de todos os temas e conquistou todas as badges."
+            : profileQuiz.profileAchievement.mission}
+        </CustomText>
+        <CustomText style={styles.missionProgress}>
+          {achievementLoadError ??
+            `Progresso: ${completedQuestionCount} de ${profileQuiz.questions.length} questões conquistadas`}
         </CustomText>
 
         <View style={styles.divider} />
 
-        <CustomText style={styles.achievementTitle}>
-          Protetor(a) do Planeta
+        <CustomText
+          style={[
+            styles.achievementTitle,
+            { color: profileQuiz.profileAchievement.color },
+          ]}
+        >
+          {profileQuiz.profileAchievement.title}
         </CustomText>
-        <Image
-          source={require("@/../assets/images/profile-shield.png")}
+        <View
+          accessibilityLabel={`Badge ${profileQuiz.profileAchievement.title}`}
+          accessibilityRole="image"
           style={styles.shield}
-          resizeMode="contain"
-        />
+        >
+          <ShieldIcon
+            color={profileQuiz.profileAchievement.color}
+            size={78}
+            weight="fill"
+          />
+          <ProfileBadgeIcon
+            color={colors.white}
+            size={30}
+            weight="fill"
+            style={styles.badgeIcon}
+          />
+        </View>
       </ScrollView>
 
       <BottomSheet
@@ -276,6 +343,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 14,
   },
+  missionProgress: {
+    width: "80%",
+    color: colors.textSecondary,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
+    marginTop: 8,
+  },
   divider: {
     width: "89.06%",
     height: 2,
@@ -292,8 +367,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   shield: {
-    width: 100,
-    height: 100,
+    width: 88,
+    height: 88,
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 8,
+  },
+  badgeIcon: {
+    position: "absolute",
+    top: 26,
   },
 });

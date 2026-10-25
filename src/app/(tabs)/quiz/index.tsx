@@ -1,14 +1,16 @@
 import { CustomText } from "@/components/custom-text";
+import { AchievementCard } from "@/components/achievement-card";
 import { PrimaryButton } from "@/components/primary-button";
 import { colors } from "@/constants/colors";
 import { quizzes } from "@/data/quizzes";
+import { completeQuizAchievement } from "@/storage/quiz-achievements";
 import { router, useLocalSearchParams } from "expo-router";
 import {
-  CheckCircleIcon,
   LightbulbFilamentIcon,
+  XCircleIcon,
   XIcon,
 } from "phosphor-react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -33,6 +35,9 @@ export default function QuizPage() {
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [showTip, setShowTip] = useState(false);
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
+  const [isSavingAchievement, setIsSavingAchievement] = useState(false);
+  const [achievementError, setAchievementError] = useState<string | null>(null);
+  const isAdvancingRef = useRef(false);
 
   useEffect(() => {
     setQuestionIndex(0);
@@ -41,6 +46,9 @@ export default function QuizPage() {
     setFinalScore(null);
     setShowTip(false);
     setValidationMessage(null);
+    setIsSavingAchievement(false);
+    setAchievementError(null);
+    isAdvancingRef.current = false;
   }, [parsedQuizIndex]);
 
   if (!quiz) {
@@ -63,9 +71,32 @@ export default function QuizPage() {
   const question = quiz.questions[questionIndex];
   const totalQuestions = quiz.questions.length;
   const isComplete = finalScore !== null;
-  const AchievementIcon = quiz.achievement.icon;
 
-  const advanceQuestion = (isCorrect: boolean) => {
+  const advanceQuestion = async (isCorrect: boolean) => {
+    if (isAdvancingRef.current) {
+      return;
+    }
+    isAdvancingRef.current = true;
+
+    if (isCorrect) {
+      setIsSavingAchievement(true);
+      setAchievementError(null);
+
+      try {
+        await completeQuizAchievement(question.achievement.id);
+      } catch (error) {
+        console.error("Não foi possível desbloquear a conquista da pergunta.", error);
+        setAchievementError(
+          "Não foi possível salvar a conquista. Tente responder novamente.",
+        );
+        setIsSavingAchievement(false);
+        isAdvancingRef.current = false;
+        return;
+      }
+
+      setIsSavingAchievement(false);
+    }
+
     const nextAnswers = [...answers, isCorrect];
     setAnswers(nextAnswers);
     setSelectedOptions([]);
@@ -75,10 +106,12 @@ export default function QuizPage() {
     if (questionIndex === totalQuestions - 1) {
       const correctAnswers = nextAnswers.filter(Boolean).length;
       setFinalScore(Math.round((correctAnswers / totalQuestions) * 100));
+      isAdvancingRef.current = false;
       return;
     }
 
     setQuestionIndex((currentIndex) => currentIndex + 1);
+    isAdvancingRef.current = false;
   };
 
   const continueQuiz = () => {
@@ -95,13 +128,14 @@ export default function QuizPage() {
       selectedOptions.length === correctIndexes.length &&
       correctIndexes.every((index) => selectedOptions.includes(index));
 
-    advanceQuestion(isCorrect);
+    void advanceQuestion(isCorrect);
   };
 
-  const skipQuestion = () => advanceQuestion(false);
+  const skipQuestion = () => void advanceQuestion(false);
 
   const toggleOption = (optionIndex: number) => {
     setValidationMessage(null);
+    setAchievementError(null);
     setSelectedOptions((currentOptions) =>
       currentOptions.includes(optionIndex)
         ? currentOptions.filter((index) => index !== optionIndex)
@@ -115,10 +149,18 @@ export default function QuizPage() {
     setAnswers([]);
     setFinalScore(null);
     setShowTip(false);
+    setAchievementError(null);
+    isAdvancingRef.current = false;
   };
 
   if (isComplete) {
-    const hasEarnedAchievement = finalScore === 100;
+    const earnedAchievements = quiz.questions
+      .filter((_, index) => answers[index])
+      .map((item) => item.achievement);
+    const earnedCount = earnedAchievements.length;
+    const hasEarnedAchievement = earnedCount > 0;
+    const badgeOffsets =
+      earnedCount === 1 ? [56] : earnedCount === 2 ? [0, 100] : [0, 56, 112];
 
     return (
       <View style={styles.screen}>
@@ -131,41 +173,53 @@ export default function QuizPage() {
           <XIcon size={24} color={colors.textPrimary} weight="regular" />
         </TouchableOpacity>
         <View style={styles.resultContent}>
-          <View
+          <CustomText style={styles.resultTitle}>
+            {hasEarnedAchievement
+              ? `Você desbloqueou\n${earnedCount === 1 ? "uma conquista!" : earnedCount === 2 ? "duas conquistas!" : "três conquistas!"}`
+              : "Quiz concluído!"}
+          </CustomText>
+          {hasEarnedAchievement ? (
+            <View style={styles.earnedBadges}>
+              {earnedAchievements.map((achievement, index) => (
+                <View
+                  key={achievement.id}
+                  style={[
+                    styles.earnedBadge,
+                    { left: badgeOffsets[index] },
+                  ]}
+                  accessibilityLabel={`Conquista desbloqueada: ${achievement.name}`}
+                >
+                  <AchievementCard
+                    isCompleted
+                    completedIcon={achievement.icon}
+                    size={200}
+                  />
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View style={[styles.resultIcon, styles.resultIconIncomplete]}>
+              <XCircleIcon size={112} color={colors.white} weight="regular" />
+            </View>
+          )}
+          <CustomText style={styles.resultDescription}>
+            {earnedCount === totalQuestions
+              ? "Você acertou todas as perguntas."
+              : `Você acertou ${answers.filter(Boolean).length} de ${totalQuestions} perguntas.`}
+          </CustomText>
+          <CustomText
             style={[
-              styles.resultIcon,
-              hasEarnedAchievement
-                ? styles.resultIconEarned
-                : styles.resultIconIncomplete,
+              styles.resultScore,
+              !hasEarnedAchievement && styles.resultScoreIncomplete,
             ]}
           >
-            {hasEarnedAchievement ? (
-              <AchievementIcon
-                size={62}
-                color={colors.textPrimary}
-                weight="fill"
-              />
-            ) : (
-              <CheckCircleIcon
-                size={62}
-                color={colors.primary}
-                weight="regular"
-              />
-            )}
-          </View>
-          <CustomText style={styles.resultTitle}>
-            {hasEarnedAchievement ? "Parabéns!" : "Quiz concluído"}
+            {finalScore}%
           </CustomText>
-          <CustomText style={styles.resultDescription}>
-            Você acertou {answers.filter(Boolean).length} de {totalQuestions}{" "}
-            perguntas.
-          </CustomText>
-          <CustomText style={styles.resultScore}>{finalScore}%</CustomText>
-          <CustomText style={styles.achievementName}>
-            {hasEarnedAchievement
-              ? `Conquista desbloqueada: ${quiz.achievement.name}`
-              : "Acerte todas as perguntas para desbloquear a conquista."}
-          </CustomText>
+          {!hasEarnedAchievement ? (
+            <CustomText style={styles.achievementName}>
+              Acerte todas as perguntas para desbloquear as conquistas.
+            </CustomText>
+          ) : null}
           <View style={styles.resultButton}>
             <PrimaryButton onPress={restartQuiz} title="Refazer quiz" />
           </View>
@@ -183,6 +237,8 @@ export default function QuizPage() {
     );
   }
 
+  const QuestionAchievementIcon = question.achievement.icon;
+
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -193,7 +249,7 @@ export default function QuizPage() {
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Sair do quiz"
-            onPress={() => router.back()}
+            onPress={() => router.replace("/(tabs)/quizzes")}
             style={styles.closeButton}
           >
             <XIcon size={24} color={colors.textPrimary} weight="regular" />
@@ -235,7 +291,18 @@ export default function QuizPage() {
           </View>
         )}
 
-        <CustomText style={styles.questionText}>{question.question}</CustomText>
+        <View style={styles.questionHeading}>
+          <View style={styles.questionIcon}>
+            <QuestionAchievementIcon
+              size={28}
+              color={colors.primary}
+              weight="fill"
+            />
+          </View>
+          <CustomText style={styles.questionText}>
+            {question.question}
+          </CustomText>
+        </View>
 
         <View style={styles.optionsGrid}>
           {question.options.map((option, index) => {
@@ -265,19 +332,27 @@ export default function QuizPage() {
           })}
         </View>
 
-        {validationMessage ? (
+        {validationMessage || achievementError ? (
           <CustomText style={styles.validationMessage}>
-            {validationMessage}
+            {validationMessage ?? achievementError}
           </CustomText>
         ) : null}
 
         <View style={styles.actions}>
           <PrimaryButton
+            disabled={isSavingAchievement}
             onPress={continueQuiz}
-            title={questionIndex === totalQuestions - 1 ? "Finalizar" : "Continuar"}
+            title={
+              isSavingAchievement
+                ? "Salvando conquista..."
+                : questionIndex === totalQuestions - 1
+                  ? "Finalizar"
+                  : "Continuar"
+            }
           />
           <TouchableOpacity
             accessibilityRole="button"
+            disabled={isSavingAchievement}
             onPress={skipQuestion}
             style={styles.skipButton}
           >
@@ -352,13 +427,27 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   questionText: {
-    marginTop: 40,
-    marginHorizontal: 40,
+    flex: 1,
+    marginLeft: 14,
     color: "#000000",
     fontSize: 16,
     fontFamily: "Poppins-SemiBold",
     fontWeight: "600",
     lineHeight: 24,
+  },
+  questionHeading: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 40,
+    marginHorizontal: 30,
+  },
+  questionIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#E6F4E7",
+    alignItems: "center",
+    justifyContent: "center",
   },
   optionsGrid: {
     flexDirection: "row",
@@ -441,61 +530,73 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 25,
+    paddingHorizontal: 32,
+    paddingTop: 72,
   },
   resultIcon: {
-    width: 120,
-    height: 120,
+    width: 200,
+    height: 200,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 60,
-  },
-  resultIconEarned: {
-    backgroundColor: colors.goldAccent,
+    borderRadius: 100,
   },
   resultIconIncomplete: {
-    backgroundColor: "#E6F4E7",
+    backgroundColor: colors.coral,
+    marginTop: 14,
+  },
+  earnedBadges: {
+    width: 312,
+    height: 200,
+    position: "relative",
+    marginTop: 38,
+  },
+  earnedBadge: {
+    position: "absolute",
+    top: 0,
   },
   resultTitle: {
-    marginTop: 24,
     color: colors.primary,
-    fontSize: 28,
+    fontSize: 32,
     fontFamily: "Poppins-Bold",
     fontWeight: "bold",
     textAlign: "center",
+    lineHeight: 48,
   },
   resultDescription: {
-    marginTop: 8,
+    marginTop: 26,
     color: colors.textPrimary,
-    fontSize: 16,
+    fontSize: 18,
+    fontFamily: "Poppins-SemiBold",
     textAlign: "center",
   },
   resultScore: {
     marginTop: 8,
     color: colors.primary,
-    fontSize: 36,
+    fontSize: 32,
     fontFamily: "Poppins-Bold",
     fontWeight: "bold",
   },
+  resultScoreIncomplete: {
+    color: colors.coral,
+  },
   achievementName: {
-    marginTop: 8,
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 21,
+    marginTop: 20,
+    color: colors.textPrimary,
+    fontSize: 12,
+    lineHeight: 18,
     textAlign: "center",
   },
   resultButton: {
-    marginTop: 30,
+    marginTop: 42,
   },
   returnButton: {
-    marginTop: 15,
+    marginTop: 4,
     padding: 8,
   },
   returnButtonText: {
-    color: colors.textPrimary,
-    fontSize: 14,
+    color: "#000000",
+    fontSize: 16,
     fontFamily: "Poppins-SemiBold",
     fontWeight: "600",
-    textDecorationLine: "underline",
   },
 });

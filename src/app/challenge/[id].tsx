@@ -1,16 +1,9 @@
-import { AchievementCard } from "@/components/achievement-card";
 import { CustomText } from "@/components/custom-text";
 import { PrimaryButton } from "@/components/primary-button";
 import { colors } from "@/constants/colors";
 import { chapters } from "@/data/chapters";
-import { completeChallenge } from "@/storage/challenges";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  ArrowLeftIcon,
-  HammerIcon,
-  TargetIcon,
-  XIcon,
-} from "phosphor-react-native";
+import { ArrowLeftIcon, TargetIcon, XIcon } from "phosphor-react-native";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
@@ -21,33 +14,18 @@ export default function ChallengePage() {
   const chapter = chapters.find((item) => item.id === id);
   const [stage, setStage] = useState<ChallengeStage>("intro");
   const [currentStep, setCurrentStep] = useState(0);
-  const [isSaving, setIsSaving] = useState(false);
-  const [completionError, setCompletionError] = useState<string | null>(null);
 
-  const finishChallenge = async () => {
+  const finishChallenge = () => {
     if (!chapter) {
       return;
     }
 
-    setIsSaving(true);
-    setCompletionError(null);
-
-    try {
-      await completeChallenge(chapter.challenge.achievementId);
-      const chapterIndex = chapters.findIndex((item) => item.id === chapter.id);
-      const nextChapter = chapters[(chapterIndex + 1) % chapters.length];
-      router.replace({
-        pathname: "/(tabs)",
-        params: { themeId: nextChapter.id },
-      });
-    } catch (error) {
-      console.error("Não foi possível salvar a conclusão do desafio.", error);
-      setCompletionError(
-        "Não foi possível registrar sua conquista. Verifique o armazenamento e tente novamente.",
-      );
-    } finally {
-      setIsSaving(false);
-    }
+    const chapterIndex = chapters.findIndex((item) => item.id === chapter.id);
+    const nextChapter = chapters[(chapterIndex + 1) % chapters.length];
+    router.replace({
+      pathname: "/(tabs)",
+      params: { themeId: nextChapter.id },
+    });
   };
 
   if (!chapter) {
@@ -94,18 +72,7 @@ export default function ChallengePage() {
           </View>
 
           <View style={styles.introFooter}>
-            <PrimaryButton
-              onPress={() => setStage("steps")}
-              title="Começar"
-            />
-            <CustomText style={styles.rewardText}>
-              Ganhe a conquista de {chapter.challenge.achievementTitle}
-            </CustomText>
-            <AchievementCard
-              isCompleted
-              completedIcon={HammerIcon}
-              size={80}
-            />
+            <PrimaryButton onPress={() => setStage("steps")} title="Começar" />
           </View>
         </View>
       ) : (
@@ -114,7 +81,9 @@ export default function ChallengePage() {
             contentContainerStyle={styles.stepsContent}
             showsVerticalScrollIndicator={false}
           >
-            <CustomText style={styles.stepsTitle}>Vamos fazer juntos!</CustomText>
+            <CustomText style={styles.stepsTitle}>
+              Vamos fazer juntos!
+            </CustomText>
             <CustomText style={styles.challengeObjective}>
               {chapter.challenge.objective}
             </CustomText>
@@ -126,7 +95,9 @@ export default function ChallengePage() {
               {chapter.challenge.materials.map((material) => (
                 <View key={material} style={styles.materialRow}>
                   <View style={styles.materialBullet} />
-                  <CustomText style={styles.materialText}>{material}</CustomText>
+                  <CustomText style={styles.materialText}>
+                    {material}
+                  </CustomText>
                 </View>
               ))}
             </View>
@@ -192,11 +163,6 @@ export default function ChallengePage() {
             </View>
           </ScrollView>
           <View style={styles.stepsFooter}>
-            {completionError ? (
-              <CustomText accessibilityRole="alert" style={styles.error}>
-                {completionError}
-              </CustomText>
-            ) : null}
             {currentStep > 0 ? (
               <Pressable
                 accessibilityRole="button"
@@ -204,7 +170,9 @@ export default function ChallengePage() {
                 style={styles.backStepButton}
               >
                 <ArrowLeftIcon color={colors.textPrimary} size={18} />
-                <CustomText style={styles.backStepText}>Etapa anterior</CustomText>
+                <CustomText style={styles.backStepText}>
+                  Etapa anterior
+                </CustomText>
               </Pressable>
             ) : null}
             {currentStep < chapter.challenge.steps.length - 1 ? (
@@ -214,9 +182,8 @@ export default function ChallengePage() {
               />
             ) : (
               <PrimaryButton
-                disabled={isSaving}
-                onPress={() => void finishChallenge()}
-                title={isSaving ? "Salvando..." : "Finalizar desafio"}
+                onPress={finishChallenge}
+                title="Finalizar desafio"
               />
             )}
           </View>
@@ -294,15 +261,8 @@ const styles = StyleSheet.create({
   },
   introFooter: {
     alignItems: "center",
-    marginTop: "auto",
+    margin: "auto",
     gap: 14,
-  },
-  rewardText: {
-    color: "#000000",
-    fontFamily: "Poppins-SemiBold",
-    fontSize: 14,
-    textAlign: "center",
-    marginTop: 12,
   },
   stepsScreen: {
     flex: 1,
@@ -460,13 +420,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-SemiBold",
     fontSize: 14,
     marginLeft: 6,
-  },
-  error: {
-    color: "#B42318",
-    fontSize: 13,
-    textAlign: "center",
-    marginHorizontal: 24,
-    marginBottom: 10,
   },
   notFound: {
     flex: 1,

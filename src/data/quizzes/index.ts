@@ -1,9 +1,17 @@
 import type { Icon } from "phosphor-react-native";
 import {
+  ArrowsClockwiseIcon,
+  BatteryChargingIcon,
+  CloudRainIcon,
   DropIcon,
+  LightbulbFilamentIcon,
   LightningIcon,
+  NewspaperClippingIcon,
   RecycleIcon,
   ShoppingBagIcon,
+  SunIcon,
+  WindmillIcon,
+  WrenchIcon,
 } from "phosphor-react-native";
 
 type QuizAlternative = Readonly<{
@@ -12,16 +20,24 @@ type QuizAlternative = Readonly<{
 }>;
 
 type QuizQuestion = Readonly<{
+  achievement: Readonly<{
+    id: string;
+    name: string;
+    icon: Icon;
+  }>;
   question: string;
   options: readonly QuizAlternative[];
 }>;
 
 export type Quiz = Readonly<{
+  chapterId: string;
   title: string;
   route: string;
   objective: string;
-  achievement: Readonly<{
-    name: string;
+  profileAchievement: Readonly<{
+    title: string;
+    mission: string;
+    color: string;
     icon: Icon;
   }>;
   questions: readonly QuizQuestion[];
@@ -29,16 +45,25 @@ export type Quiz = Readonly<{
 
 export const quizzes: readonly Quiz[] = [
   {
+    chapterId: "reciclagem",
     title: "Entendendo a Reciclagem",
     route: "/quiz",
     objective:
       "Aprender a separar resíduos e reconhecer a importância da reciclagem.",
-    achievement: {
-      name: "Guardião da Reciclagem",
+    profileAchievement: {
+      title: "Protetor(a) do Planeta",
+      mission:
+        "Acerte as 3 perguntas do quiz sobre reciclagem para aprender a separar resíduos e dar uma nova vida aos materiais.",
+      color: "#4CAF50",
       icon: RecycleIcon,
     },
     questions: [
       {
+        achievement: {
+          id: "recycling-quiz-question-1",
+          name: "Separador de Resíduos",
+          icon: RecycleIcon,
+        },
         question: "Quais atitudes ajudam a preparar uma embalagem para reciclagem?",
         options: [
           { option: "Esvaziá-la e separá-la conforme a coleta local", isCorrect: true },
@@ -48,6 +73,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "recycling-quiz-question-2",
+          name: "Amigo do Papel",
+          icon: NewspaperClippingIcon,
+        },
         question: "Quais práticas facilitam a reciclagem de papel?",
         options: [
           { option: "Separá-lo de materiais que não são recicláveis", isCorrect: true },
@@ -57,6 +87,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "recycling-quiz-question-3",
+          name: "Guardião das Pilhas",
+          icon: BatteryChargingIcon,
+        },
         question: "Quais resíduos devem ser levados a pontos de coleta especiais?",
         options: [
           { option: "Pilhas usadas", isCorrect: true },
@@ -68,16 +103,25 @@ export const quizzes: readonly Quiz[] = [
     ],
   },
   {
+    chapterId: "agua",
     title: "A Importância da Água",
     route: "/quiz",
     objective:
       "Compreender a importância da água e conhecer maneiras de preservá-la.",
-    achievement: {
-      name: "Protetor da Água",
+    profileAchievement: {
+      title: "Mestre da água",
+      mission:
+        "Acerte as 3 perguntas do quiz sobre água para descobrir como economizar e cuidar desse recurso tão importante para a vida.",
+      color: "#42A5F5",
       icon: DropIcon,
     },
     questions: [
       {
+        achievement: {
+          id: "water-quiz-question-1",
+          name: "Protetor da Água",
+          icon: DropIcon,
+        },
         question: "Quais atitudes ajudam a economizar água ao escovar os dentes?",
         options: [
           { option: "Usar água corrente para enxaguar a escova", isCorrect: false },
@@ -87,6 +131,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "water-quiz-question-2",
+          name: "Detetive de Vazamentos",
+          icon: WrenchIcon,
+        },
         question: "Quais atitudes ajudam a lidar com um vazamento em casa?",
         options: [
           { option: "Deixar a água correr para identificar o problema", isCorrect: false },
@@ -96,6 +145,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "water-quiz-question-3",
+          name: "Amigo das Gotinhas",
+          icon: CloudRainIcon,
+        },
         question: "Quais são formas de reutilizar água?",
         options: [
           { option: "Usar água da chuva para regar plantas", isCorrect: true },
@@ -107,16 +161,25 @@ export const quizzes: readonly Quiz[] = [
     ],
   },
   {
+    chapterId: "energia",
     title: "O Poder da Energia",
     route: "/quiz",
     objective:
       "Conhecer formas de geração de energia e hábitos para economizá-la.",
-    achievement: {
-      name: "Guardião da Energia",
+    profileAchievement: {
+      title: "Guardião(ã) da luz",
+      mission:
+        "Acerte as 3 perguntas do quiz sobre energia para conhecer fontes renováveis e aprender hábitos para evitar desperdícios.",
+      color: "#D9B43F",
       icon: LightningIcon,
     },
     questions: [
       {
+        achievement: {
+          id: "energy-quiz-question-1",
+          name: "Explorador de Energias",
+          icon: WindmillIcon,
+        },
         question: "Quais destas são fontes de energia renovável?",
         options: [
           { option: "Energia solar", isCorrect: true },
@@ -126,6 +189,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "energy-quiz-question-2",
+          name: "Economizador de Energia",
+          icon: LightbulbFilamentIcon,
+        },
         question: "Quais hábitos ajudam a economizar energia elétrica?",
         options: [
           { option: "Apagar as luzes ao sair de um cômodo", isCorrect: true },
@@ -135,6 +203,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "energy-quiz-question-3",
+          name: "Amigo do Sol",
+          icon: SunIcon,
+        },
         question: "Quais tecnologias podem aproveitar a energia do sol?",
         options: [
           { option: "Gerador a diesel", isCorrect: false },
@@ -146,16 +219,25 @@ export const quizzes: readonly Quiz[] = [
     ],
   },
   {
+    chapterId: "consumo-consciente",
     title: "Consumo Consciente",
     route: "/quiz",
     objective:
       "Fazer escolhas de consumo considerando necessidades, durabilidade e impactos ambientais.",
-    achievement: {
-      name: "Consumidor Consciente",
-      icon: ShoppingBagIcon,
+    profileAchievement: {
+      title: "Mestre Sustentável",
+      mission:
+        "Acerte as 3 perguntas do quiz sobre consumo consciente para fazer boas escolhas, cuidar dos objetos e evitar compras por impulso.",
+      color: "#FF8A65",
+      icon: LightbulbFilamentIcon,
     },
     questions: [
       {
+        achievement: {
+          id: "consumption-quiz-question-1",
+          name: "Detetive das Compras",
+          icon: ShoppingBagIcon,
+        },
         question: "O que é importante avaliar antes de comprar um produto?",
         options: [
           { option: "Se ele é realmente necessário", isCorrect: true },
@@ -165,6 +247,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "consumption-quiz-question-2",
+          name: "Cuidador de Objetos",
+          icon: WrenchIcon,
+        },
         question: "Quais atitudes podem prolongar a vida útil de um objeto?",
         options: [
           { option: "Consertá-lo quando possível", isCorrect: true },
@@ -174,6 +261,11 @@ export const quizzes: readonly Quiz[] = [
         ],
       },
       {
+        achievement: {
+          id: "consumption-quiz-question-3",
+          name: "Planejador Consciente",
+          icon: ArrowsClockwiseIcon,
+        },
         question: "Quais atitudes ajudam a evitar compras por impulso?",
         options: [
           { option: "Esperar um tempo antes de decidir uma compra não planejada", isCorrect: true },

@@ -25,18 +25,7 @@ export default function QuizzesPage() {
       >
         <CustomText style={styles.pageTitle}>Quizzes</CustomText>
         <CustomText style={styles.sectionTitle}>
-          Lista de exercícios concluídos
-        </CustomText>
-        <View style={styles.quizCard}>
-          <QuizAttemptCard
-            title="Primeiro quiz de conhecimentos gerais"
-            lastAttemptPercentage={80}
-          />
-        </View>
-        <View style={styles.divider} />
-
-        <CustomText style={styles.sectionTitle}>
-          Quizzes para fazer
+          Escolha um tema para jogar
         </CustomText>
         {quizzes.map((quiz, index) => (
           <TouchableOpacity
@@ -91,11 +80,5 @@ const styles = StyleSheet.create({
   quizCard: {
     marginTop: 16,
     marginHorizontal: 19,
-  },
-  divider: {
-    height: 2,
-    backgroundColor: "#D9D9D9",
-    marginTop: 15,
-    marginHorizontal: 24,
   },
 });
