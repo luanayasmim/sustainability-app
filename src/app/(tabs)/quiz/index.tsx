@@ -3,6 +3,7 @@ import { AchievementCard } from "@/components/achievement-card";
 import { PrimaryButton } from "@/components/primary-button";
 import { colors } from "@/constants/colors";
 import { quizzes } from "@/data/quizzes";
+import { saveQuizAttempt } from "@/storage/quiz-attempts";
 import { completeQuizAchievement } from "@/storage/quiz-achievements";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -37,6 +38,8 @@ export default function QuizPage() {
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const [isSavingAchievement, setIsSavingAchievement] = useState(false);
   const [achievementError, setAchievementError] = useState<string | null>(null);
+  const [attemptSaveError, setAttemptSaveError] = useState<string | null>(null);
+  const [isSavingAttempt, setIsSavingAttempt] = useState(false);
   const isAdvancingRef = useRef(false);
 
   useEffect(() => {
@@ -48,6 +51,8 @@ export default function QuizPage() {
     setValidationMessage(null);
     setIsSavingAchievement(false);
     setAchievementError(null);
+    setAttemptSaveError(null);
+    setIsSavingAttempt(false);
     isAdvancingRef.current = false;
   }, [parsedQuizIndex]);
 
@@ -105,7 +110,22 @@ export default function QuizPage() {
 
     if (questionIndex === totalQuestions - 1) {
       const correctAnswers = nextAnswers.filter(Boolean).length;
-      setFinalScore(Math.round((correctAnswers / totalQuestions) * 100));
+      const score = Math.round((correctAnswers / totalQuestions) * 100);
+      setIsSavingAttempt(true);
+      setAttemptSaveError(null);
+
+      try {
+        await saveQuizAttempt(quiz.chapterId, score);
+      } catch (error) {
+        console.error("Não foi possível salvar o resultado do quiz.", error);
+        setAttemptSaveError(
+          "Não foi possível salvar o resultado. Tente novamente.",
+        );
+      } finally {
+        setIsSavingAttempt(false);
+      }
+
+      setFinalScore(score);
       isAdvancingRef.current = false;
       return;
     }
@@ -150,7 +170,28 @@ export default function QuizPage() {
     setFinalScore(null);
     setShowTip(false);
     setAchievementError(null);
+    setAttemptSaveError(null);
     isAdvancingRef.current = false;
+  };
+
+  const retrySaveAttempt = async () => {
+    if (finalScore === null || isSavingAttempt) {
+      return;
+    }
+
+    setIsSavingAttempt(true);
+    setAttemptSaveError(null);
+
+    try {
+      await saveQuizAttempt(quiz.chapterId, finalScore);
+    } catch (error) {
+      console.error("Não foi possível salvar o resultado do quiz.", error);
+      setAttemptSaveError(
+        "Não foi possível salvar o resultado. Tente novamente.",
+      );
+    } finally {
+      setIsSavingAttempt(false);
+    }
   };
 
   if (isComplete) {
@@ -220,6 +261,23 @@ export default function QuizPage() {
               Acerte todas as perguntas para desbloquear as conquistas.
             </CustomText>
           ) : null}
+          {attemptSaveError ? (
+            <>
+              <CustomText accessibilityRole="alert" style={styles.saveError}>
+                {attemptSaveError}
+              </CustomText>
+              <TouchableOpacity
+                accessibilityRole="button"
+                disabled={isSavingAttempt}
+                onPress={() => void retrySaveAttempt()}
+                style={styles.retrySaveButton}
+              >
+                <CustomText style={styles.returnButtonText}>
+                  {isSavingAttempt ? "Salvando..." : "Tentar salvar resultado"}
+                </CustomText>
+              </TouchableOpacity>
+            </>
+          ) : null}
           <View style={styles.resultButton}>
             <PrimaryButton onPress={restartQuiz} title="Refazer quiz" />
           </View>
@@ -249,6 +307,7 @@ export default function QuizPage() {
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel="Sair do quiz"
+            disabled={isSavingAttempt}
             onPress={() => router.replace("/(tabs)/quizzes")}
             style={styles.closeButton}
           >
@@ -598,5 +657,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Poppins-SemiBold",
     fontWeight: "600",
+  },
+  saveError: {
+    color: colors.coral,
+    fontSize: 13,
+    textAlign: "center",
+    marginTop: 12,
+  },
+  retrySaveButton: {
+    paddingVertical: 8,
   },
 });
