@@ -1,4 +1,4 @@
-import { CheckCircleIcon } from "phosphor-react-native";
+import { CheckCircleIcon, XIcon } from "phosphor-react-native";
 import { StyleSheet, View } from "react-native";
 import { colors } from "../constants/colors";
 import { CustomText } from "./custom-text";
@@ -6,49 +6,44 @@ import { CustomText } from "./custom-text";
 type QuizAttemptCardProps = Readonly<{
   title: string;
   lastAttemptPercentage?: number;
-  correctAnswers?: number | null;
-  totalQuestions?: number;
-  attemptCount?: number;
   titleColor?: string;
 }>;
 
 export function QuizAttemptCard({
   title,
   lastAttemptPercentage,
-  correctAnswers,
-  totalQuestions,
-  attemptCount,
   titleColor = colors.primary,
 }: QuizAttemptCardProps) {
+  const isZeroScore = lastAttemptPercentage === 0;
+  const resolvedTitleColor = isZeroScore ? colors.coral : titleColor;
+
   return (
-    <View style={styles.card}>
-      <CustomText numberOfLines={1} style={[styles.title, { color: titleColor }]}>
+    <View style={[styles.card, isZeroScore && styles.zeroScoreCard]}>
+      <CustomText
+        numberOfLines={1}
+        style={[styles.title, { color: resolvedTitleColor }]}
+      >
         {title}
       </CustomText>
       {lastAttemptPercentage !== undefined && (
         <View style={styles.attempt}>
-          <CustomText style={styles.label}>
-            {attemptCount && attemptCount > 1
-              ? `${attemptCount} tentativas`
-              : "Última tentativa"}
-          </CustomText>
+          <CustomText style={styles.label}>Última tentativa</CustomText>
           <View style={styles.result}>
             <CustomText style={styles.percentage}>
               {lastAttemptPercentage}%
             </CustomText>
-            <CheckCircleIcon
-              size={24}
-              color={colors.primary}
-              weight="fill"
-            />
+            {isZeroScore ? (
+              <View style={styles.errorIcon}>
+                <XIcon size={12} color={colors.white} weight="bold" />
+              </View>
+            ) : (
+              <CheckCircleIcon
+                size={24}
+                color={colors.primary}
+                weight="fill"
+              />
+            )}
           </View>
-          {correctAnswers !== null &&
-          correctAnswers !== undefined &&
-          totalQuestions ? (
-            <CustomText style={styles.correctAnswers}>
-              {correctAnswers}/{totalQuestions} acertos
-            </CustomText>
-          ) : null}
         </View>
       )}
     </View>
@@ -74,6 +69,9 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
+  zeroScoreCard: {
+    backgroundColor: "#FFF8F6",
+  },
   title: {
     flex: 1,
     marginRight: 16,
@@ -82,8 +80,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   attempt: {
-    minWidth: 81,
-    alignItems: "center",
+    width: 81,
+    alignItems: "flex-end",
   },
   label: {
     color: "#2E2E2E",
@@ -101,8 +99,12 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-SemiBold",
     fontWeight: "600",
   },
-  correctAnswers: {
-    color: colors.textSecondary,
-    fontSize: 9,
+  errorIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.coral,
   },
 });

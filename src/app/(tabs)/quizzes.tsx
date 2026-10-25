@@ -130,13 +130,6 @@ export default function QuizzesPage() {
                     lastAttemptPercentage={
                       quizAttempts[quiz.chapterId].percentage
                     }
-                    attemptCount={quizAttempts[quiz.chapterId].attemptCount}
-                    correctAnswers={
-                      quizAttempts[quiz.chapterId].correctAnswers
-                    }
-                    totalQuestions={
-                      quizAttempts[quiz.chapterId].totalQuestions
-                    }
                     title={quiz.title}
                     titleColor={colors.primary}
                   />
