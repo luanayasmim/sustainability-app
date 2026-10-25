@@ -1,9 +1,5 @@
 import { router } from "expo-router";
-import {
-  CheckIcon,
-  PencilSimpleIcon,
-  XIcon,
-} from "phosphor-react-native";
+import { PencilSimpleIcon, XIcon } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -13,8 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { BottomSheet } from "../../components/bottom-sheet";
 import { CustomInput } from "../../components/custom-input";
 import { CustomText } from "../../components/custom-text";
+import { PrimaryButton } from "../../components/primary-button";
 import { colors } from "../../constants/colors";
 import { getUserName, saveUserName } from "../../storage/user";
 
@@ -51,6 +49,10 @@ export default function ProfilePage() {
   }, []);
 
   const saveEditedName = async () => {
+    if (isSavingName) {
+      return;
+    }
+
     const normalizedName = editedName.trim();
 
     if (!normalizedName) {
@@ -75,6 +77,10 @@ export default function ProfilePage() {
   };
 
   const cancelNameEdit = () => {
+    if (isSavingName) {
+      return;
+    }
+
     setEditedName(name);
     setSaveError(null);
     setIsEditingName(false);
@@ -97,70 +103,27 @@ export default function ProfilePage() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.nameRow}>
-          {isEditingName ? (
-            <>
-              <CustomInput
-                accessibilityLabel="Editar nome"
-                autoCapitalize="words"
-                autoComplete="name"
-                autoFocus
-                cursorColor="transparent"
-                editable={!isSavingName}
-                error={saveError ?? undefined}
-                label=""
-                onChangeText={(value) => {
-                  setEditedName(value);
-                  setSaveError(null);
-                }}
-                onSubmitEditing={() => void saveEditedName()}
-                returnKeyType="done"
-                style={styles.nameInput}
-                selectionColor="transparent"
-                underlineColorAndroid="transparent"
-                value={editedName}
+          <>
+            <CustomText numberOfLines={1} style={styles.name}>
+              {nameError ? "Erro ao carregar perfil" : name}
+            </CustomText>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Editar nome"
+              onPress={() => {
+                setEditedName(name);
+                setSaveError(null);
+                setIsEditingName(true);
+              }}
+              style={styles.editButton}
+            >
+              <PencilSimpleIcon
+                size={32}
+                color={colors.primary}
+                weight="fill"
               />
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel="Salvar nome"
-                disabled={isSavingName}
-                onPress={() => void saveEditedName()}
-                style={styles.editButton}
-              >
-                <CheckIcon size={28} color={colors.primary} weight="bold" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel="Cancelar edição do nome"
-                disabled={isSavingName}
-                onPress={cancelNameEdit}
-                style={styles.editButton}
-              >
-                <XIcon size={24} color={colors.textSecondary} weight="regular" />
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <CustomText style={styles.name}>
-                {nameError ? "Erro ao carregar perfil" : name}
-              </CustomText>
-              <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel="Editar nome"
-                onPress={() => {
-                  setEditedName(name);
-                  setSaveError(null);
-                  setIsEditingName(true);
-                }}
-                style={styles.editButton}
-              >
-                <PencilSimpleIcon
-                  size={32}
-                  color={colors.primary}
-                  weight="fill"
-                />
-              </TouchableOpacity>
-            </>
-          )}
+            </TouchableOpacity>
+          </>
         </View>
         {saveError && !isEditingName ? (
           <CustomText style={styles.saveError}>{saveError}</CustomText>
@@ -186,6 +149,46 @@ export default function ProfilePage() {
           resizeMode="contain"
         />
       </ScrollView>
+
+      <BottomSheet
+        onClose={cancelNameEdit}
+        title="Editar nome"
+        visible={isEditingName}
+      >
+        <View style={styles.editForm}>
+          <CustomInput
+            accessibilityLabel="Digite seu nome"
+            autoCapitalize="words"
+            autoComplete="name"
+            autoFocus
+            editable={!isSavingName}
+            error={saveError ?? undefined}
+            label="Nome"
+            onChangeText={(value) => {
+              setEditedName(value);
+              setSaveError(null);
+            }}
+            onSubmitEditing={() => void saveEditedName()}
+            placeholder="Digite seu nome"
+            returnKeyType="done"
+            value={editedName}
+          />
+          <PrimaryButton
+            disabled={isSavingName}
+            onPress={() => void saveEditedName()}
+            title={isSavingName ? "Salvando..." : "Salvar"}
+          />
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Cancelar edição do nome"
+            disabled={isSavingName}
+            onPress={cancelNameEdit}
+            style={styles.cancelButton}
+          >
+            <CustomText style={styles.cancelButtonText}>Cancelar</CustomText>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
     </View>
   );
 }
@@ -207,6 +210,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   nameRow: {
+    width: "90%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -214,6 +218,7 @@ const styles = StyleSheet.create({
     height: 48,
   },
   name: {
+    flexShrink: 1,
     color: colors.primary,
     fontSize: 32,
     fontFamily: "Poppins-Bold",
@@ -226,21 +231,16 @@ const styles = StyleSheet.create({
     minWidth: 32,
     minHeight: 40,
   },
-  nameInput: {
-    width: 220,
-    height: 48,
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    borderWidth: 0,
-    borderColor: "transparent",
-    borderRadius: 0,
-    outlineColor: "transparent",
-    outlineWidth: 0,
-    backgroundColor: "transparent",
-    elevation: 0,
-    fontFamily: "Poppins-Bold",
-    fontSize: 24,
-    textAlign: "right",
+  editForm: {
+    alignItems: "center",
+  },
+  cancelButton: {
+    marginTop: 16,
+    padding: 8,
+  },
+  cancelButtonText: {
+    color: colors.textSecondary,
+    fontSize: 14,
   },
   saveError: {
     marginTop: 4,

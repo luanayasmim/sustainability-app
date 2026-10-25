@@ -3,19 +3,24 @@ import { colors } from "../constants/colors";
 import { CustomText } from "./custom-text";
 
 type PrimaryButtonProps = Readonly<{
+  disabled?: boolean;
   onPress: () => void;
   title: string;
   backgroundColor?: string;
 }>;
 
 export function PrimaryButton({
+  disabled = false,
   onPress,
   title,
   backgroundColor = colors.primary,
 }: PrimaryButtonProps) {
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor }]}
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      style={[styles.button, { backgroundColor }, disabled && styles.disabled]}
       onPress={onPress}
     >
       <CustomText style={styles.buttonText}>{title}</CustomText>
@@ -31,6 +36,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 300,
     height: 50,
+  },
+  disabled: {
+    opacity: 0.6,
   },
   buttonText: {
     color: colors.white,
