@@ -1,19 +1,86 @@
 import { router } from "expo-router";
-import { PencilSimpleIcon, XIcon } from "phosphor-react-native";
+import {
+  CheckIcon,
+  PencilSimpleIcon,
+  XIcon,
+} from "phosphor-react-native";
+import { useEffect, useState } from "react";
 import {
   Image,
+  Keyboard,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
+import { CustomInput } from "../../components/custom-input";
 import { CustomText } from "../../components/custom-text";
 import { colors } from "../../constants/colors";
+import { getUserName, saveUserName } from "../../storage/user";
 
 const missionDescription =
   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
 
 export default function ProfilePage() {
+  const [name, setName] = useState("");
+  const [editedName, setEditedName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSavingName, setIsSavingName] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+
+    getUserName()
+      .then((savedName) => {
+        if (isActive) {
+          setName(savedName ?? "");
+          setEditedName(savedName ?? "");
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setNameError(true);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const saveEditedName = async () => {
+    const normalizedName = editedName.trim();
+
+    if (!normalizedName) {
+      setSaveError("O nome não pode ficar vazio.");
+      return;
+    }
+
+    setIsSavingName(true);
+    setSaveError(null);
+
+    try {
+      await saveUserName(normalizedName);
+      setName(normalizedName);
+      setEditedName(normalizedName);
+      setIsEditingName(false);
+      Keyboard.dismiss();
+    } catch {
+      setSaveError("Não foi possível salvar o nome. Tente novamente.");
+    } finally {
+      setIsSavingName(false);
+    }
+  };
+
+  const cancelNameEdit = () => {
+    setEditedName(name);
+    setSaveError(null);
+    setIsEditingName(false);
+    Keyboard.dismiss();
+  };
+
   return (
     <View style={styles.screen}>
       <TouchableOpacity
@@ -30,11 +97,74 @@ export default function ProfilePage() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.nameRow}>
-          <CustomText style={styles.name}>Luis</CustomText>
-          <View style={styles.editButton}>
-            <PencilSimpleIcon size={32} color={colors.primary} weight="fill" />
-          </View>
+          {isEditingName ? (
+            <>
+              <CustomInput
+                accessibilityLabel="Editar nome"
+                autoCapitalize="words"
+                autoComplete="name"
+                autoFocus
+                cursorColor="transparent"
+                editable={!isSavingName}
+                error={saveError ?? undefined}
+                label=""
+                onChangeText={(value) => {
+                  setEditedName(value);
+                  setSaveError(null);
+                }}
+                onSubmitEditing={() => void saveEditedName()}
+                returnKeyType="done"
+                style={styles.nameInput}
+                selectionColor="transparent"
+                underlineColorAndroid="transparent"
+                value={editedName}
+              />
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Salvar nome"
+                disabled={isSavingName}
+                onPress={() => void saveEditedName()}
+                style={styles.editButton}
+              >
+                <CheckIcon size={28} color={colors.primary} weight="bold" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Cancelar edição do nome"
+                disabled={isSavingName}
+                onPress={cancelNameEdit}
+                style={styles.editButton}
+              >
+                <XIcon size={24} color={colors.textSecondary} weight="regular" />
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <CustomText style={styles.name}>
+                {nameError ? "Erro ao carregar perfil" : name}
+              </CustomText>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Editar nome"
+                onPress={() => {
+                  setEditedName(name);
+                  setSaveError(null);
+                  setIsEditingName(true);
+                }}
+                style={styles.editButton}
+              >
+                <PencilSimpleIcon
+                  size={32}
+                  color={colors.primary}
+                  weight="fill"
+                />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
+        {saveError && !isEditingName ? (
+          <CustomText style={styles.saveError}>{saveError}</CustomText>
+        ) : null}
 
         <View style={styles.avatarPlaceholder}>
           <CustomText style={styles.avatarLabel}>(Personagem)</CustomText>
@@ -77,10 +207,10 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   nameRow: {
-    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    gap: 12,
     height: 48,
   },
   name: {
@@ -91,8 +221,31 @@ const styles = StyleSheet.create({
     lineHeight: 48,
   },
   editButton: {
-    position: "absolute",
-    left: "60%",
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 32,
+    minHeight: 40,
+  },
+  nameInput: {
+    width: 220,
+    height: 48,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderWidth: 0,
+    borderColor: "transparent",
+    borderRadius: 0,
+    outlineColor: "transparent",
+    outlineWidth: 0,
+    backgroundColor: "transparent",
+    elevation: 0,
+    fontFamily: "Poppins-Bold",
+    fontSize: 24,
+    textAlign: "right",
+  },
+  saveError: {
+    marginTop: 4,
+    color: colors.coral,
+    fontSize: 12,
   },
   avatarPlaceholder: {
     width: "76.34%",

@@ -6,8 +6,10 @@ import {
 } from "phosphor-react-native";
 import type { BottomTabBarProps } from "expo-router/js-tabs";
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { colors } from "../constants/colors";
+import { getUserName, subscribeToUserName } from "../storage/user";
 import { CustomText } from "./custom-text";
 
 type TabItem = {
@@ -48,6 +50,28 @@ const tabItems: Record<string, TabItem> = {
 };
 
 export function BottomNavigation(props: BottomTabBarProps) {
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+    const unsubscribe = subscribeToUserName(setUserName);
+
+    getUserName()
+      .then((name) => {
+        if (isActive) {
+          setUserName(name);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error("Não foi possível carregar o nome para a navegação.", error);
+      });
+
+    return () => {
+      isActive = false;
+      unsubscribe();
+    };
+  }, []);
+
   const items = props.state.routes.map((route, index) => {
     const tab = tabItems[route.name];
     const options = props.descriptors[route.key].options;
@@ -55,7 +79,10 @@ export function BottomNavigation(props: BottomTabBarProps) {
 
     return {
       route,
-      label: tab?.label ?? options.title ?? route.name,
+      label:
+        route.name === "perfil"
+          ? userName ?? tab?.label ?? options.title ?? route.name
+          : tab?.label ?? options.title ?? route.name,
       color: tab?.color ?? colors.primary,
       icon: tab?.renderIcon(
         isFocused ? colors.white : colors.textPrimary,
@@ -103,7 +130,9 @@ export function BottomNavigation(props: BottomTabBarProps) {
             >
               {item.icon}
             </View>
-            <CustomText style={styles.label}>{item.label}</CustomText>
+            <CustomText numberOfLines={1} style={styles.label}>
+              {item.label}
+            </CustomText>
           </TouchableOpacity>
         );
       })}
@@ -134,6 +163,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
+    maxWidth: 82,
     fontSize: 12,
     fontWeight: "bold",
     fontFamily: "Poppins-Bold",
