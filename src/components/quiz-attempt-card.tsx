@@ -5,31 +5,35 @@ import { CustomText } from "./custom-text";
 
 type QuizAttemptCardProps = Readonly<{
   title: string;
-  lastAttemptPercentage: number;
+  lastAttemptPercentage?: number;
+  titleColor?: string;
 }>;
 
 export function QuizAttemptCard({
   title,
   lastAttemptPercentage,
+  titleColor = colors.primary,
 }: QuizAttemptCardProps) {
   return (
     <View style={styles.card}>
-      <CustomText numberOfLines={1} style={styles.title}>
+      <CustomText numberOfLines={1} style={[styles.title, { color: titleColor }]}>
         {title}
       </CustomText>
-      <View style={styles.attempt}>
-        <CustomText style={styles.label}>Última tentativa</CustomText>
-        <View style={styles.result}>
-          <CustomText style={styles.percentage}>
-            {lastAttemptPercentage}%
-          </CustomText>
-          <CheckCircleIcon
-            size={24}
-            color={colors.primary}
-            weight="fill"
-          />
+      {lastAttemptPercentage !== undefined && (
+        <View style={styles.attempt}>
+          <CustomText style={styles.label}>Última tentativa</CustomText>
+          <View style={styles.result}>
+            <CustomText style={styles.percentage}>
+              {lastAttemptPercentage}%
+            </CustomText>
+            <CheckCircleIcon
+              size={24}
+              color={colors.primary}
+              weight="fill"
+            />
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 }
@@ -56,7 +60,6 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     marginRight: 16,
-    color: colors.primary,
     fontSize: 12,
     fontFamily: "Poppins-Bold",
     fontWeight: "bold",

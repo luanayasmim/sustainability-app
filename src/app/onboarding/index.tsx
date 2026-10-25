@@ -1,7 +1,7 @@
+import { CustomText } from "@/components/custom-text";
+import { PrimaryButton } from "@/components/primary-button";
 import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import { PrimaryButton } from "../../components/primary-button";
-import { CustomText } from "../../components/custom-text";
 
 export default function OnboardingStartPage() {
   return (

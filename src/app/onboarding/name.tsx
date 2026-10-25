@@ -1,3 +1,7 @@
+import { CustomInput } from "@/components/custom-input";
+import { CustomText } from "@/components/custom-text";
+import { PrimaryButton } from "@/components/primary-button";
+import { saveUserName } from "@/storage/user";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -7,10 +11,6 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { CustomInput } from "../../components/custom-input";
-import { PrimaryButton } from "../../components/primary-button";
-import { CustomText } from "../../components/custom-text";
-import { saveUserName } from "../../storage/user";
 
 export default function OnboardingNamePage() {
   const [name, setName] = useState("");

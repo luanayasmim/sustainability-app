@@ -51,6 +51,7 @@ const tabItems: Record<string, TabItem> = {
 
 export function BottomNavigation(props: BottomTabBarProps) {
   const [userName, setUserName] = useState<string | null>(null);
+  const activeRoute = props.state.routes[props.state.index]?.name;
 
   useEffect(() => {
     let isActive = true;
@@ -72,25 +73,31 @@ export function BottomNavigation(props: BottomTabBarProps) {
     };
   }, []);
 
-  const items = props.state.routes.map((route, index) => {
-    const tab = tabItems[route.name];
-    const options = props.descriptors[route.key].options;
-    const isFocused = props.state.index === index;
+  if (activeRoute === "quiz") {
+    return null;
+  }
 
-    return {
-      route,
-      label:
-        route.name === "perfil"
-          ? userName ?? tab?.label ?? options.title ?? route.name
-          : tab?.label ?? options.title ?? route.name,
-      color: tab?.color ?? colors.primary,
-      icon: tab?.renderIcon(
-        isFocused ? colors.white : colors.textPrimary,
-      ),
-      isFocused,
-      accessibilityLabel: options.tabBarAccessibilityLabel,
-    };
-  });
+  const items = props.state.routes
+    .map((route, index) => {
+      const tab = tabItems[route.name];
+      const options = props.descriptors[route.key].options;
+      const isFocused = props.state.index === index;
+
+      return {
+        route,
+        label:
+          route.name === "perfil"
+            ? userName ?? tab?.label ?? options.title ?? route.name
+            : tab?.label ?? options.title ?? route.name,
+        color: tab?.color ?? colors.primary,
+        icon: tab?.renderIcon(
+          isFocused ? colors.white : colors.textPrimary,
+        ),
+        isFocused,
+        accessibilityLabel: options.tabBarAccessibilityLabel,
+      };
+    })
+    .filter(({ route }) => route.name !== "quiz");
 
   return (
     <View

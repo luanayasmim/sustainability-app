@@ -1,10 +1,10 @@
+import { AchievementCard } from "@/components/achievement-card";
+import { CustomText } from "@/components/custom-text";
+import { colors } from "@/constants/colors";
 import { router } from "expo-router";
 import type { Icon } from "phosphor-react-native";
 import { WindmillIcon, XIcon } from "phosphor-react-native";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { AchievementCard } from "../../components/achievement-card";
-import { CustomText } from "../../components/custom-text";
-import { colors } from "../../constants/colors";
 
 type Achievement = Readonly<
   | { id: string; isCompleted: false }

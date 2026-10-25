@@ -1,9 +1,11 @@
+import { CustomText } from "@/components/custom-text";
+import { QuizAttemptCard } from "@/components/quiz-attempt-card";
+import { colors } from "@/constants/colors";
+import { quizzes } from "@/data/quizzes";
 import { router } from "expo-router";
+import type { Href } from "expo-router";
 import { XIcon } from "phosphor-react-native";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { CustomText } from "../../components/custom-text";
-import { QuizAttemptCard } from "../../components/quiz-attempt-card";
-import { colors } from "../../constants/colors";
 
 export default function QuizzesPage() {
   return (
@@ -32,6 +34,24 @@ export default function QuizzesPage() {
           />
         </View>
         <View style={styles.divider} />
+
+        <CustomText style={styles.sectionTitle}>
+          Quizzes para fazer
+        </CustomText>
+        {quizzes.map((quiz, index) => (
+          <TouchableOpacity
+            key={quiz.title}
+            accessibilityRole="button"
+            accessibilityLabel={`Iniciar ${quiz.title}`}
+            activeOpacity={0.8}
+            onPress={() =>
+              router.push(`${quiz.route}?quizIndex=${index}` as Href)
+            }
+            style={styles.quizCard}
+          >
+            <QuizAttemptCard title={quiz.title} titleColor={colors.blue} />
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </View>
   );

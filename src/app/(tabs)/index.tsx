@@ -1,5 +1,5 @@
-import { LearningSection } from "@/src/components/learning-section";
-import { colors } from "@/src/constants/colors";
+import { LearningSection } from "@/components/learning-section";
+import { colors } from "@/constants/colors";
 import { ScrollView } from "react-native";
 
 export default function HomePage() {

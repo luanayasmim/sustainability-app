@@ -1,3 +1,9 @@
+import { BottomSheet } from "@/components/bottom-sheet";
+import { CustomInput } from "@/components/custom-input";
+import { CustomText } from "@/components/custom-text";
+import { PrimaryButton } from "@/components/primary-button";
+import { colors } from "@/constants/colors";
+import { getUserName, saveUserName } from "@/storage/user";
 import { router } from "expo-router";
 import { PencilSimpleIcon, XIcon } from "phosphor-react-native";
 import { useEffect, useState } from "react";
@@ -9,12 +15,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { BottomSheet } from "../../components/bottom-sheet";
-import { CustomInput } from "../../components/custom-input";
-import { CustomText } from "../../components/custom-text";
-import { PrimaryButton } from "../../components/primary-button";
-import { colors } from "../../constants/colors";
-import { getUserName, saveUserName } from "../../storage/user";
 
 const missionDescription =
   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
@@ -144,7 +144,7 @@ export default function ProfilePage() {
           Protetor(a) do Planeta
         </CustomText>
         <Image
-          source={require("../../../assets/images/profile-shield.png")}
+          source={require("@/../assets/images/profile-shield.png")}
           style={styles.shield}
           resizeMode="contain"
         />

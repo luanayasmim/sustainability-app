@@ -1,10 +1,10 @@
+import { CustomText } from "@/components/custom-text";
+import { PrimaryButton } from "@/components/primary-button";
+import { colors } from "@/constants/colors";
+import { getUserName } from "@/storage/user";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { PrimaryButton } from "../../components/primary-button";
-import { CustomText } from "../../components/custom-text";
-import { colors } from "../../constants/colors";
-import { getUserName } from "../../storage/user";
 
 const missionDescription =
   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n(texto explicando as missões)";
