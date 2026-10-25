@@ -4,10 +4,11 @@ import { colors } from "@/constants/colors";
 import { getUserName } from "@/storage/user";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import CapiWelcome from "../../../assets/images/capi-welcome.svg";
 
 const missionDescription =
-  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n(texto explicando as missões)";
+  "Oi! Eu sou a Capi e vou acompanhar você nesta jornada pela sustentabilidade. Aqui, você pode aprender com conteúdos, explorar temas e participar de desafios. Vamos descobrir juntos como cuidar melhor do planeta?";
 
 export default function OnboardingWelcomePage() {
   const { name: routeName } = useLocalSearchParams<{ name?: string }>();
@@ -58,12 +59,12 @@ export default function OnboardingWelcomePage() {
   };
 
   return (
-    <View style={styles.screen}>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <CustomText style={styles.title}>
         {name ? `Bem-vindo(a), ${name}!` : "Bem-vindo(a)!"}
       </CustomText>
       <View style={styles.character}>
-        <CustomText style={styles.characterText}>(personagem)</CustomText>
+        <CapiWelcome width={200} height={254} />
       </View>
       <CustomText style={styles.description}>{missionDescription}</CustomText>
       {error ? (
@@ -74,7 +75,7 @@ export default function OnboardingWelcomePage() {
       <View style={styles.startButton}>
         <PrimaryButton onPress={startApp} title="Iniciar" />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -83,10 +84,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F0F0F0",
   },
+  content: {
+    flexGrow: 1,
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+  },
   title: {
-    position: "absolute",
-    top: "7.04%",
-    alignSelf: "center",
     width: "100%",
     color: colors.primary,
     fontSize: 32,
@@ -97,43 +102,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   character: {
-    position: "absolute",
-    top: "18.54%",
-    left: "50%",
     width: 200,
-    height: 200,
-    marginLeft: -100,
+    height: 254,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#D9D9D9",
-  },
-  characterText: {
-    color: "#000000",
-    fontSize: 20,
-    textAlign: "center",
   },
   description: {
-    position: "absolute",
-    top: "48.94%",
-    alignSelf: "center",
-    width: 293,
+    width: "100%",
+    maxWidth: 320,
     color: colors.textPrimary,
     fontSize: 12,
     lineHeight: 18,
     textAlign: "center",
   },
   error: {
-    position: "absolute",
-    top: "67%",
-    alignSelf: "center",
     color: colors.coral,
     fontSize: 12,
     textAlign: "center",
   },
   startButton: {
-    position: "absolute",
-    top: "76.53%",
-    left: "50%",
-    marginLeft: -150,
+    alignItems: "center",
   },
 });

@@ -1,13 +1,13 @@
-import { CustomText } from "@/components/custom-text";
 import { PrimaryButton } from "@/components/primary-button";
 import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
+import CapiIntro from "../../../assets/images/capi-intro.svg";
 
 export default function OnboardingStartPage() {
   return (
     <View style={styles.screen}>
       <View style={styles.character}>
-        <CustomText style={styles.characterText}>(personagem)</CustomText>
+        <CapiIntro width={250} height={312} />
       </View>
       <View style={styles.startButton}>
         <PrimaryButton
@@ -26,19 +26,13 @@ const styles = StyleSheet.create({
   },
   character: {
     position: "absolute",
-    top: "33.45%",
+    top: "25%",
     left: "50%",
-    width: 200,
-    height: 200,
-    marginLeft: -100,
+    width: 250,
+    height: 312,
+    marginLeft: -125,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#D9D9D9",
-  },
-  characterText: {
-    color: "#000000",
-    fontSize: 20,
-    textAlign: "center",
   },
   startButton: {
     position: "absolute",

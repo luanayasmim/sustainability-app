@@ -1,9 +1,9 @@
 import { CustomInput } from "@/components/custom-input";
-import { CustomText } from "@/components/custom-text";
 import { PrimaryButton } from "@/components/primary-button";
 import { saveUserName } from "@/storage/user";
 import { router } from "expo-router";
 import { useState } from "react";
+import CapiName from "../../../assets/images/capi-name.svg";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -43,7 +43,7 @@ export default function OnboardingNamePage() {
     >
       <View style={styles.screen}>
         <View style={styles.character}>
-          <CustomText style={styles.characterText}>(personagem)</CustomText>
+          <CapiName width={250} height={385} />
         </View>
 
         <View style={styles.form}>
@@ -83,23 +83,17 @@ const styles = StyleSheet.create({
   },
   character: {
     position: "absolute",
-    top: "5.87%",
+    top: "13.7%",
     left: "50%",
-    width: 200,
-    height: 200,
-    marginLeft: -100,
+    width: 250,
+    height: 385,
+    marginLeft: -125,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#D9D9D9",
-  },
-  characterText: {
-    color: "#000000",
-    fontSize: 20,
-    textAlign: "center",
   },
   form: {
     position: "absolute",
-    top: "38.62%",
+    top: "64.2%",
     left: 0,
     right: 0,
     alignItems: "center",

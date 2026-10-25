@@ -31,7 +31,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#f0f0f0"
         }
-      ]
+      ],
+      "expo-alternate-app-icons"
     ],
     "experiments": {
       "typedRoutes": true

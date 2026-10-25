@@ -7,8 +7,16 @@ import { quizzes } from "@/data/quizzes";
 import { getCompletedQuizAchievementIds } from "@/storage/quiz-achievements";
 import { getUserName, saveUserName } from "@/storage/user";
 import { router, useFocusEffect } from "expo-router";
-import { PencilSimpleIcon, ShieldIcon, XIcon } from "phosphor-react-native";
+import { PencilSimpleIcon, XIcon } from "phosphor-react-native";
 import { useCallback, useEffect, useState } from "react";
+import CapiMission1 from "../../../assets/images/capi-mission1.svg";
+import CapiMission2 from "../../../assets/images/capi-mission2.svg";
+import CapiMission3 from "../../../assets/images/capi-mission3.svg";
+import CapiMission4 from "../../../assets/images/capi-mission4.svg";
+import Shield1 from "../../../assets/images/shield1.svg";
+import Shield2 from "../../../assets/images/shield2.svg";
+import Shield3 from "../../../assets/images/shield3.svg";
+import Shield4 from "../../../assets/images/shield4.svg";
 import {
   Keyboard,
   ScrollView,
@@ -16,6 +24,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+const missionCharacters = [
+  CapiMission1,
+  CapiMission2,
+  CapiMission3,
+  CapiMission4,
+] as const;
+
+const missionShields = [Shield1, Shield2, Shield3, Shield4] as const;
 
 export default function ProfilePage() {
   const [name, setName] = useState("");
@@ -129,7 +146,9 @@ export default function ProfilePage() {
   const completedQuestionCount = profileQuiz.questions.filter((question) =>
     completedQuizAchievementIds.includes(question.achievement.id),
   ).length;
-  const ProfileBadgeIcon = profileQuiz.profileAchievement.icon;
+  const profileQuizIndex = quizzes.indexOf(profileQuiz);
+  const ProfileCharacter = missionCharacters[profileQuizIndex];
+  const ProfileShield = missionShields[profileQuizIndex];
 
   return (
     <View style={styles.screen}>
@@ -173,8 +192,12 @@ export default function ProfilePage() {
           <CustomText style={styles.saveError}>{saveError}</CustomText>
         ) : null}
 
-        <View style={styles.avatarPlaceholder}>
-          <CustomText style={styles.avatarLabel}>(Personagem)</CustomText>
+        <View
+          accessibilityLabel={`Personagem da missão: ${profileQuiz.title}`}
+          accessibilityRole="image"
+          style={styles.avatar}
+        >
+          <ProfileCharacter width={111} height={150} />
         </View>
 
         <CustomText style={styles.missionTitle}>Missão</CustomText>
@@ -203,17 +226,7 @@ export default function ProfilePage() {
           accessibilityRole="image"
           style={styles.shield}
         >
-          <ShieldIcon
-            color={profileQuiz.profileAchievement.color}
-            size={78}
-            weight="fill"
-          />
-          <ProfileBadgeIcon
-            color={colors.white}
-            size={30}
-            weight="fill"
-            style={styles.badgeIcon}
-          />
+          <ProfileShield width={88} height={88} />
         </View>
       </ScrollView>
 
@@ -318,18 +331,11 @@ const styles = StyleSheet.create({
     color: colors.coral,
     fontSize: 12,
   },
-  avatarPlaceholder: {
-    width: "76.34%",
+  avatar: {
     height: 150,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 15,
-    backgroundColor: "#D9D9D9",
-  },
-  avatarLabel: {
-    color: "#000000",
-    fontSize: 18,
-    fontFamily: "Poppins-Medium",
   },
   missionTitle: {
     color: colors.textPrimary,
@@ -376,9 +382,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 8,
-  },
-  badgeIcon: {
-    position: "absolute",
-    top: 26,
   },
 });
