@@ -1,11 +1,11 @@
 import { useFonts } from "expo-font";
-import { Tabs } from "expo-router";
+import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
 void SplashScreen.preventAutoHideAsync();
 
-export default function AppLayout(children: React.ReactNode) {
+export default function AppLayout() {
   const [fontsLoaded, fontError] = useFonts({
     "Poppins-Black": require("../../assets/fonts/Poppins-Black.ttf"),
     "Poppins-BlackItalic": require("../../assets/fonts/Poppins-BlackItalic.ttf"),
@@ -37,5 +37,5 @@ export default function AppLayout(children: React.ReactNode) {
     return null;
   }
 
-  return <Tabs />;
+  return <Slot />;
 }
