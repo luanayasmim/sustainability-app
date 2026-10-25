@@ -203,7 +203,10 @@ const styles = StyleSheet.create({
     top: 12,
     left: 18,
     zIndex: 1,
-    padding: 4,
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   intro: {
     flex: 1,

@@ -144,9 +144,13 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 25,
-    left: 25,
+    top: 12,
+    left: 18,
     zIndex: 1,
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: {
     paddingTop: 65,

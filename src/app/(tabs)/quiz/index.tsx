@@ -8,6 +8,7 @@ import { completeQuizAchievement } from "@/storage/quiz-achievements";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   LightbulbFilamentIcon,
+  TargetIcon,
   XCircleIcon,
   XIcon,
 } from "phosphor-react-native";
@@ -31,6 +32,7 @@ export default function QuizPage() {
       : undefined;
 
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [finalScore, setFinalScore] = useState<number | null>(null);
@@ -44,6 +46,7 @@ export default function QuizPage() {
 
   useEffect(() => {
     setQuestionIndex(0);
+    setHasStarted(false);
     setSelectedOptions([]);
     setAnswers([]);
     setFinalScore(null);
@@ -165,6 +168,7 @@ export default function QuizPage() {
 
   const restartQuiz = () => {
     setQuestionIndex(0);
+    setHasStarted(false);
     setSelectedOptions([]);
     setAnswers([]);
     setFinalScore(null);
@@ -209,7 +213,7 @@ export default function QuizPage() {
           accessibilityRole="button"
           accessibilityLabel="Voltar para quizzes"
           onPress={() => router.replace("/(tabs)/quizzes")}
-          style={styles.closeButton}
+          style={styles.floatingCloseButton}
         >
           <XIcon size={24} color={colors.textPrimary} weight="regular" />
         </TouchableOpacity>
@@ -291,6 +295,44 @@ export default function QuizPage() {
             </CustomText>
           </TouchableOpacity>
         </View>
+      </View>
+    );
+  }
+
+  if (!hasStarted) {
+    return (
+      <View style={styles.screen}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Voltar para quizzes"
+          onPress={() => router.replace("/(tabs)/quizzes")}
+          style={styles.floatingCloseButton}
+        >
+          <XIcon size={24} color={colors.textPrimary} weight="regular" />
+        </TouchableOpacity>
+        <ScrollView
+          contentContainerStyle={styles.introContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <CustomText style={styles.introTitle}>
+            Quiz: {quiz.title}
+          </CustomText>
+          <View style={styles.objectiveCard}>
+            <View style={styles.objectiveHeading}>
+              <TargetIcon color={colors.coral} size={34} weight="bold" />
+              <CustomText style={styles.objectiveTitle}>Objetivo</CustomText>
+            </View>
+            <CustomText style={styles.objectiveText}>
+              {quiz.objective}
+            </CustomText>
+          </View>
+          <View style={styles.introButton}>
+            <PrimaryButton
+              onPress={() => setHasStarted(true)}
+              title="Começar"
+            />
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -432,14 +474,78 @@ const styles = StyleSheet.create({
     paddingTop: 25,
     paddingBottom: 190,
   },
+  introContent: {
+    flexGrow: 1,
+    alignItems: "center",
+    paddingTop: 90,
+    paddingBottom: 40,
+  },
+  introTitle: {
+    width: "90%",
+    color: colors.primary,
+    fontSize: 32,
+    fontFamily: "Poppins-Bold",
+    fontWeight: "bold",
+    lineHeight: 42,
+    textAlign: "center",
+  },
+  objectiveCard: {
+    width: "72%",
+    maxWidth: 340,
+    minHeight: 300,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 28,
+    paddingVertical: 24,
+    marginTop: 38,
+    borderRadius: 12,
+    backgroundColor: "#F9FFF9",
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.16,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  objectiveHeading: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    marginBottom: 24,
+  },
+  objectiveTitle: {
+    color: colors.textPrimary,
+    fontSize: 24,
+    fontFamily: "Poppins-Bold",
+    fontWeight: "bold",
+  },
+  objectiveText: {
+    color: colors.textPrimary,
+    fontSize: 20,
+    lineHeight: 30,
+    textAlign: "center",
+  },
+  introButton: {
+    marginTop: 80,
+  },
   progressHeader: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 25,
   },
   closeButton: {
-    width: 24,
-    height: 24,
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  floatingCloseButton: {
+    position: "absolute",
+    top: 12,
+    left: 18,
+    zIndex: 1,
+    width: 44,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
   },
