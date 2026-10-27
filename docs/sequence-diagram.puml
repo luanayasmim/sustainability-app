@@ -1,0 +1,68 @@
+@startuml
+skinparam sequence {
+  ArrowColor #2F3A4A
+  LifeLineBorderColor #2F3A4A
+  LifeLineBackgroundColor #F4F7FB
+  ParticipantBorderColor #2F3A4A
+  ParticipantBackgroundColor #EAF2FF
+  ActorBorderColor #2F3A4A
+  ActorBackgroundColor #F6F6F6
+  BoxBorderColor #A0B9D9
+  BoxBackgroundColor #F8FAFC
+}
+
+actor Usuario as U
+participant "App" as A
+participant "StorageLocal" as S
+
+== Acessar onboarding e cadastrar nome ==
+U -> A: Abrir aplicativo
+A -> A: Exibir tela de onboarding
+A --> U: Mostrar introdução
+U -> A: Cadastrar nome
+A -> A: Validar nome
+alt Nome válido
+    A -> S: saveUserName(nome)
+    S --> A: Confirma gravação
+    A --> U: Avançar para tela principal
+else Nome inválido
+    A --> U: Exibir mensagem de erro
+end
+
+== Navegar por temas e iniciar desafio ==
+U -> A: Selecionar tema
+A -> A: Carregar conteúdo educativo
+A --> U: Exibir tema e informações
+U -> A: Iniciar desafio
+A -> A: Mostrar objetivo, materiais e etapas
+A --> U: Exibir desafio
+
+== Responder quiz ==
+U -> A: Responder perguntas do quiz
+A -> A: Calcular acertos
+A -> S: Salvar histórico / progresso do quiz
+S --> A: Confirma persistência
+A --> U: Exibir resultado e percentual
+A -> A: Atualizar conquistas
+A --> U: Exibir badges/estatísticas
+
+== Editar perfil e retomar progresso ==
+U -> A: Acessar perfil
+A -> S: getUserName()
+S --> A: Nome salvo
+A --> U: Exibir perfil
+U -> A: Editar nome
+A -> A: Validar novo nome
+alt Novo nome válido
+    A -> S: saveUserName(novoNome)
+    S --> A: Confirma atualização
+    A --> U: Nome atualizado
+else Nome inválido
+    A --> U: Exibir erro de validação
+end
+
+U -> A: Fechar e reabrir aplicativo
+A -> S: getCurrentLessonThemeId()
+S --> A: Último tema salvo
+A --> U: Restaurar último progresso e tema acessado
+@enduml

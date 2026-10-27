@@ -1,0 +1,40 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam linetype ortho
+
+actor Usuario as U
+actor Sistema as S
+
+rectangle "App de Sustentabilidade" {
+  usecase "UC01 - Acessar onboarding" as UC01
+  usecase "UC02 - Informar nome" as UC02
+  usecase "UC03 - Navegar por temas" as UC03
+  usecase "UC04 - Iniciar desafio" as UC04
+  usecase "UC05 - Responder quiz" as UC05
+  usecase "UC06 - Visualizar conquistas" as UC06
+  usecase "UC07 - Editar perfil" as UC07
+  usecase "UC08 - Retomar progresso" as UC08
+}
+
+U --> UC01
+U --> UC02
+U --> UC03
+U --> UC04
+U --> UC05
+U --> UC06
+U --> UC07
+U --> UC08
+
+UC01 ..> UC02 : avança para cadastro
+UC03 ..> UC04 : seleciona tema
+UC05 ..> UC08 : atualiza progresso
+UC07 ..> UC02 : altera nome salvo
+
+S --> UC02
+S --> UC05
+S --> UC08
+S --> UC07
+@enduml
